@@ -1,8 +1,1 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.digirunestudios.twisted",
-        "sha256_cert_fingerprints": ["8B:D9:22:A2:99:C7:E8:E9:43:42:8D:02:0A:D4:37:EE:E0:61:F9:AB:52:57:D3:B9:9C:FD:45:47:DA:09:1D:9F"]
-      }
-    }]
+[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"android_app","package_name":"com.digirunestudios.twisted","sha256_cert_fingerprints":["78:4A:EC:03:1F:5C:DF:81:2D:D8:48:83:EE:95:C7:72:8C:35:F0:1C:73:E7:01:E9:76:C0:C7:A1:8F:09:15:1C","8B:D9:22:A2:99:C7:E8:E9:43:42:8D:02:0A:D4:37:EE:E0:61:F9:AB:52:57:D3:B9:9C:FD:45:47:DA:09:1D:9F"]}}]
