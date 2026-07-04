@@ -6371,6 +6371,19 @@ window.addEventListener('load',function(){
   ];
   const list=document.getElementById('lang-list');
   const siteUrl=window.location.hostname?window.location.origin+window.location.pathname:'https://twisted.digirunestudios.com/';
+  // iOS wrapper: the translate.google.com proxy is blocked in-webview ("unusual traffic").
+  // Hand the current page to Safari's built-in Translate (reliable, respects translate="no",
+  // works iOS 15+). Web + Android keep the full language list below, unchanged.
+  var translateNative=/PWAShell/.test(navigator.userAgent)&&!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.translatePage);
+  if(translateNative){
+    var _tt=document.querySelector('#translate-popup > div');if(_tt)_tt.textContent='🌐 Translate';
+    var _tb=document.createElement('button');_tb.className='lang-option';_tb.style.textAlign='center';_tb.textContent='Translate this page';
+    _tb.onclick=function(){try{window.webkit.messageHandlers.translatePage.postMessage(window.location.href);}catch(e){}var p=document.getElementById('translate-popup');if(p){p.style.opacity='0';p.style.pointerEvents='none';}};
+    list.appendChild(_tb);
+    var _tn=document.createElement('div');_tn.setAttribute('translate','no');_tn.style.cssText='font-family:\'Josefin Sans\',sans-serif;font-size:.66rem;line-height:1.35;color:var(--brass-dark);margin-top:.5rem;';_tn.textContent='Opens in Safari — tap “aA” in the toolbar, choose Translate, then your language.';
+    list.appendChild(_tn);
+    return;
+  }
   langs.forEach(([code,name])=>{
     const btn=document.createElement('button');
     btn.className='lang-option';
@@ -6415,6 +6428,15 @@ window.addEventListener('load',function(){
     var app=appMod.initializeApp(cfg),auth=authMod.getAuth(app),db=fsMod.getFirestore(app);
     var provider=new authMod.GoogleAuthProvider();
     var appleProvider=new authMod.OAuthProvider('apple.com');appleProvider.addScope('email');appleProvider.addScope('name');
+    // iOS wrapper detection: Firebase web OAuth (popup/redirect) breaks inside WKWebView
+    // ("auth/missing-initial-state"). Inside the app, the native shell runs Apple's sheet and
+    // calls the callbacks below. Web + Android have no such handler → they keep the popup flow.
+    var appleNative=/PWAShell/.test(navigator.userAgent)&&!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.startAppleSignIn);
+    window.__onNativeAppleCredential=function(idToken,rawNonce){try{setStatus('Signing in…');var cred=appleProvider.credential({idToken:idToken,rawNonce:rawNonce});authMod.signInWithCredential(auth,cred).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});}catch(e){setStatus('Sign-in didn’t complete — tap the button to try again');}};
+    window.__onNativeAppleError=function(reason){setStatus(reason==='canceled'?'Cloud sync (off)':'Sign-in didn’t complete — tap the button to try again');};
+    var googleNative=/PWAShell/.test(navigator.userAgent)&&!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.startGoogleSignIn);
+    window.__onNativeGoogleCredential=function(idToken,accessToken){try{setStatus('Signing in…');var cred=authMod.GoogleAuthProvider.credential(idToken,accessToken||null);authMod.signInWithCredential(auth,cred).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});}catch(e){setStatus('Sign-in didn’t complete — tap the button to try again');}};
+    window.__onNativeGoogleError=function(reason){setStatus(reason==='canceled'?'Cloud sync (off)':'Sign-in didn’t complete — tap the button to try again');};
     var pushTimer=null,currentUser=null,unsub=null;
     function docRef(uid){return fsMod.doc(db,'users',uid);}
     function pushMap(map){if(!currentUser)return;fsMod.setDoc(docRef(currentUser.uid),{blob:JSON.stringify(map),updatedAt:Date.now(),device:deviceId()}).catch(function(){});}
@@ -6424,9 +6446,9 @@ window.addEventListener('load',function(){
     var b=btnEl();
     if(b){b.onclick=function(){if(currentUser){authMod.signOut(auth);}else{setStatus('Opening Google sign-in…');authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn\u2019t complete \u2014 tap the button to try again');});}};}
     var gb=document.getElementById('google-signin-btn');
-    if(gb){gb.onclick=function(){setStatus('Opening Google sign-in…');authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
+    if(gb){gb.onclick=function(){setStatus('Opening Google sign-in…');if(googleNative){try{window.webkit.messageHandlers.startGoogleSignIn.postMessage({});return;}catch(e){}}authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
     var ab=document.getElementById('apple-signin-btn');
-    if(ab){ab.onclick=function(){setStatus('Opening Apple sign-in…');authMod.signInWithPopup(auth,appleProvider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
+    if(ab){ab.onclick=function(){setStatus('Opening Apple sign-in…');if(appleNative){try{window.webkit.messageHandlers.startAppleSignIn.postMessage({});return;}catch(e){}}authMod.signInWithPopup(auth,appleProvider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
     var delBtn=document.getElementById('delete-account-btn');
     if(delBtn){delBtn.onclick=function(){if(!currentUser){setStatus('Sign in first to manage your account.');return;}if(!window.confirm('Permanently delete your synced cloud data and your account? This cannot be undone.'))return;setStatus('Deleting your account…');var uid=currentUser.uid;fsMod.deleteDoc(fsMod.doc(db,'users',uid)).catch(function(){}).then(function(){return currentUser.delete();}).then(function(){setStatus('Your account and synced data were deleted.');}).catch(function(e){if(e&&e.code==='auth/requires-recent-login'){setStatus('Please sign in again to confirm deletion.');var p=(currentUser.providerData[0]&&currentUser.providerData[0].providerId==='apple.com')?appleProvider:provider;authMod.signInWithPopup(auth,p).then(function(){return fsMod.deleteDoc(fsMod.doc(db,'users',uid)).catch(function(){}).then(function(){return auth.currentUser.delete();});}).then(function(){setStatus('Your account and synced data were deleted.');}).catch(function(){setStatus('Could not delete — please try again.');});}else{setStatus('Could not delete — please try again.');}});};}
     /* popup keeps auth in-window; no redirect result to process */
