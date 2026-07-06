@@ -66,7 +66,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* HEADER */
 header{background:linear-gradient(180deg,rgba(26,18,8,.98),rgba(26,26,40,.95));border-bottom:1px solid var(--brass-dark);padding:0 1.25rem;position:sticky;top:0;z-index:100;box-shadow:0 4px 30px rgba(0,0,0,.5);}
 .header-inner{max-width:1400px;margin:0 auto;display:flex;flex-direction:column;gap:0;padding:.5rem 0 .45rem;}
-.header-top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.42rem;min-width:0;}
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.42rem;min-width:0;flex-wrap:wrap;row-gap:.4rem;}
 .logo-twisted{font-family:'Cinzel Decorative',serif;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--brass-light),var(--brass),var(--copper));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.1em;filter:drop-shadow(0 0 8px rgba(212,184,74,.4));white-space:nowrap;line-height:1.1;}
 .logo-sub{font-family:'Josefin Sans',sans-serif;font-size:.62rem;letter-spacing:.22em;color:var(--brass);text-transform:uppercase;display:block;margin-top:2px;}
 nav{display:flex;flex-wrap:wrap;justify-content:center;gap:.22rem;}
@@ -868,7 +868,7 @@ body.game-mode .mobile-nav-item.game-hidden{display:none;}
 header{padding:0 .65rem;}
 .header-top{gap:.3rem;}
 .logo-area{margin-right:auto;}
-.header-actions{gap:.5rem;}
+.header-actions{gap:.5rem;margin-left:auto;}
 .logo-twisted{font-size:1.25rem;letter-spacing:.06em;}
 .logo-sub{display:none;}
 .header-icon-btn{width:44px;height:44px;font-size:.9rem;}
@@ -888,6 +888,20 @@ main{padding:.75rem .65rem;}
 .wc-desc{font-size:.75rem;line-height:1.4;}
 .welcome-quote{margin:1rem auto 0;padding:.9rem 1.2rem .85rem;}
 .welcome-quote::before{font-size:3rem;top:-.5rem;left:1rem;}
+}
+/* ── HEADER: stay elastic so icons never clip at large Display sizes / very narrow widths ── */
+@media(max-width:400px){
+  .header-actions{gap:.34rem;}
+  .header-icon-btn{width:40px;height:40px;}
+  .hamburger-btn{min-width:40px;min-height:40px;}
+  .logo-twisted{font-size:1.15rem;}
+}
+@media(max-width:345px){
+  header{padding:0 .5rem;}
+  .header-actions{gap:.26rem;}
+  .header-icon-btn{width:38px;height:38px;}
+  .hamburger-btn{min-width:38px;min-height:38px;}
+  .logo-twisted{font-size:1.05rem;letter-spacing:.04em;}
 }
 /* ── BUILDER RESPONSIVE LAYOUT ───────────────────────────── */
 .builder-layout{display:grid;grid-template-columns:1fr 320px;gap:1.75rem;align-items:start;}
