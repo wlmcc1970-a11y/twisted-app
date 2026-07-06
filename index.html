@@ -66,7 +66,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* HEADER */
 header{background:linear-gradient(180deg,rgba(26,18,8,.98),rgba(26,26,40,.95));border-bottom:1px solid var(--brass-dark);padding:0 1.25rem;position:sticky;top:0;z-index:100;box-shadow:0 4px 30px rgba(0,0,0,.5);}
 .header-inner{max-width:1400px;margin:0 auto;display:flex;flex-direction:column;gap:0;padding:.5rem 0 .45rem;}
-.header-top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.42rem;min-width:0;flex-wrap:wrap;row-gap:.4rem;}
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.42rem;min-width:0;}
 .logo-twisted{font-family:'Cinzel Decorative',serif;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--brass-light),var(--brass),var(--copper));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.1em;filter:drop-shadow(0 0 8px rgba(212,184,74,.4));white-space:nowrap;line-height:1.1;}
 .logo-sub{font-family:'Josefin Sans',sans-serif;font-size:.62rem;letter-spacing:.22em;color:var(--brass);text-transform:uppercase;display:block;margin-top:2px;}
 nav{display:flex;flex-wrap:wrap;justify-content:center;gap:.22rem;}
@@ -867,8 +867,8 @@ body.game-mode .mobile-nav-item.game-hidden{display:none;}
 @media(max-width:480px){
 header{padding:0 .65rem;}
 .header-top{gap:.3rem;}
-.logo-area{margin-right:auto;}
-.header-actions{gap:.5rem;margin-left:auto;}
+.logo-area{margin-right:auto;min-width:0;overflow:hidden;}
+.header-actions{gap:.5rem;}
 .logo-twisted{font-size:1.25rem;letter-spacing:.06em;}
 .logo-sub{display:none;}
 .header-icon-btn{width:44px;height:44px;font-size:.9rem;}
@@ -889,19 +889,32 @@ main{padding:.75rem .65rem;}
 .welcome-quote{margin:1rem auto 0;padding:.9rem 1.2rem .85rem;}
 .welcome-quote::before{font-size:3rem;top:-.5rem;left:1rem;}
 }
-/* ── HEADER: stay elastic so icons never clip at large Display sizes / very narrow widths ── */
-@media(max-width:400px){
-  .header-actions{gap:.34rem;}
+/* ── HEADER: shrink smoothly so it stays a SINGLE row — never clips, never wraps — down to ~300px ── */
+@media(max-width:440px){
+  .header-actions{gap:.4rem;}
   .header-icon-btn{width:40px;height:40px;}
   .hamburger-btn{min-width:40px;min-height:40px;}
   .logo-twisted{font-size:1.15rem;}
 }
-@media(max-width:345px){
+@media(max-width:390px){
   header{padding:0 .5rem;}
-  .header-actions{gap:.26rem;}
+  .header-actions{gap:.3rem;}
   .header-icon-btn{width:38px;height:38px;}
   .hamburger-btn{min-width:38px;min-height:38px;}
   .logo-twisted{font-size:1.05rem;letter-spacing:.04em;}
+}
+@media(max-width:345px){
+  header{padding:0 .45rem;}
+  .header-actions{gap:.24rem;}
+  .header-icon-btn{width:36px;height:36px;}
+  .hamburger-btn{min-width:36px;min-height:36px;}
+  .logo-twisted{font-size:.98rem;}
+}
+@media(max-width:312px){
+  .header-actions{gap:.2rem;}
+  .header-icon-btn{width:34px;height:34px;}
+  .hamburger-btn{min-width:34px;min-height:34px;}
+  .logo-twisted{font-size:.9rem;}
 }
 /* ── BUILDER RESPONSIVE LAYOUT ───────────────────────────── */
 .builder-layout{display:grid;grid-template-columns:1fr 320px;gap:1.75rem;align-items:start;}
@@ -1461,7 +1474,7 @@ header{
     <button id="sync-btn" type="button" style="display:none;width:100%;min-height:44px;padding:.6rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:.85rem;font-weight:600;letter-spacing:.03em;color:#1a140a;background:linear-gradient(135deg,var(--brass-light,#e8d8a0),var(--brass,#d4b84a));border:none;border-radius:8px;cursor:pointer;">Sign in to sync</button>
     <button id="google-signin-btn" type="button" style="display:none;width:100%;min-height:44px;border-radius:8px;border:1px solid #747775;background:#fff;color:#1f1f1f;font-family:'Josefin Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;align-items:center;justify-content:center;gap:.5rem;"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Sign in with Google</button>
     <button id="apple-signin-btn" type="button" style="display:none;width:100%;min-height:44px;margin-top:.5rem;border-radius:8px;border:1px solid #000;background:#000;color:#fff;font-family:'Josefin Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;align-items:center;justify-content:center;gap:.5rem;"><svg width="15" height="18" viewBox="0 0 14 17" fill="currentColor" aria-hidden="true"><path d="M11.6 9c0-1.9 1.5-2.8 1.6-2.9-0.9-1.3-2.2-1.5-2.7-1.5-1.1-.1-2.2.7-2.8.7s-1.5-.7-2.4-.6c-1.2 0-2.4.7-3 1.8-1.3 2.2-.3 5.5.9 7.3.6.9 1.3 1.9 2.3 1.8.9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.6-.9 2.2-1.8c.7-1 .9-2 1-2-.1 0-1.9-.7-1.9-2.9zM9.8 3.2c.5-.6.8-1.5.8-2.4-.7 0-1.6.5-2.1 1.1-.5.5-.9 1.4-.8 2.3.8.1 1.6-.4 2.1-1z"/></svg>Sign in with Apple</button>
-    <div id="sync-note" style="font-size:.7rem;line-height:1.4;color:#9a8f7a;margin-top:.6rem;">Optional. Signing in saves your selections to your Google account via Google Firebase so they sync across your devices. The app works fully without it. <a href="https://www.digirunestudios.com" target="_blank" rel="noopener" style="color:var(--brass,#d4b84a);">Privacy Policy</a>.</div>
+    <div id="sync-note" style="font-size:.7rem;line-height:1.4;color:#9a8f7a;margin-top:.6rem;">Optional. Signing in saves your selections to your Google or Apple account (via Firebase) so they sync across your devices. The app works fully without it. <a href="https://www.digirunestudios.com" target="_blank" rel="noopener" style="color:var(--brass,#d4b84a);">Privacy Policy</a>.</div>
     <button id="delete-account-btn" type="button" style="display:none;width:100%;min-height:44px;margin-top:.75rem;border-radius:8px;border:1px solid #a33;background:transparent;color:#e08a8a;font-family:'Josefin Sans',sans-serif;font-size:.82rem;cursor:pointer;">Delete account &amp; synced data</button>
     <p id="delete-account-note" style="display:none;font-size:.7rem;color:#9a8f7a;margin:.35rem 0 0;">Permanently deletes your synced cloud data and your sign-in account. Your on-device data stays unless you remove the app. This cannot be undone.</p>
   </div>
@@ -2406,7 +2419,7 @@ reg('characters',function(){
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-chars" onclick="toggleTutorial('chars')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-chars">
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google. It’s free, completely optional, and you can sign out anytime.</p></div>
+  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
       Every playable Character from all four factions is listed here. Use the <strong style="color:var(--brass-light)">faction tabs</strong> to browse Dickensians, Servants of The Engine, Scions of the Sands, and Guild of Harmony. Tap any card to expand full stats, weapons, abilities, and lore.
@@ -3810,7 +3823,7 @@ reg('missions',function(){
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-missions" onclick="toggleTutorial('missions')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-missions">
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google. It’s free, completely optional, and you can sign out anytime.</p></div>
+  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
       Every game of Twisted uses a randomly generated mission. After setting up terrain, players determine their mission by rolling for a <strong style="color:var(--brass-light)">Deployment Type</strong> (D10), a <strong style="color:var(--brass-light)">Primary Objective</strong> (D20), and optionally <strong style="color:var(--brass-light)">Fascinating Features</strong> (D6 for quantity, then D20 each). Each player also draws a secret <strong style="color:var(--brass-light)">Tarot of Taxing Tasks</strong> card for bonus Victory Points.
@@ -4906,7 +4919,7 @@ function renderDelights(filterTier='all',searchVal=''){
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-delights" onclick="toggleTutorial('delights')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-delights">
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google. It’s free, completely optional, and you can sign out anytime.</p></div>
+  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);text-align:left">
     <div style="padding:.65rem .85rem;font-size:.85rem;line-height:1.55">
       <span style="color:var(--parchment)">When building a Company (200pts), you pick Characters on the \ud83c\udfad Characters tab and manage your full roster on the \ud83d\udccb Company tab. Any leftover points can be spent here on equipment items. Tap <span style="color:#6BCFA8;font-weight:700">+</span> to add a Delight \u2014 its cost counts against your shared 200pt budget. Each Character may hold only one Delight at a time. Items can be swapped between Characters during a game using a Handing Off Action.</span>
@@ -5077,7 +5090,7 @@ function renderBuilder(){
   <button class="tut-btn" id="tut-btn-company" onclick="toggleTutorial('company')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-company">
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">Save up to 3 companies.</strong> Use the numbered tabs (1 · 2 · 3) at the top of this page to keep up to three separate companies — each with its own name and roster. Tap a number to switch between them; tap “+ New” to start another. The company shown here is your active one.</p></div>
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google. It’s free, completely optional, and you can sign out anytime.</p></div>
+  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL — Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
       This is your Company roster \u2014 the warband you\u2019ll field in a game of \u201cTwisted.\u201d A standard Company uses a <strong>200-point budget</strong> shared between Characters and Delights.
@@ -6241,8 +6254,38 @@ document.addEventListener('click',()=>setTimeout(makeStatPillsClickable,200));
 // Waits for load to avoid competing with initial render for bandwidth.
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      // Re-check for a newer version whenever the app is reopened / brought to the front.
+      document.addEventListener('visibilitychange',function(){
+        if(document.visibilityState==='visible'){ try{ reg.update(); }catch(e){} }
+      });
+      // A newer service worker finished installing while an old one is still in control
+      // → a fresh version is ready. Offer the user a gentle, dismissible refresh.
+      reg.addEventListener('updatefound',function(){
+        var nw=reg.installing; if(!nw) return;
+        nw.addEventListener('statechange',function(){
+          if(nw.state==='installed' && navigator.serviceWorker.controller){ showUpdateBar(); }
+        });
+      });
+    }).catch(function(){});
   });
+}
+// Dismissible "new version available" bar. Web/Android/iOS all load the live site, so this
+// covers every content/feature/fix update automatically; tapping Refresh loads the new version.
+function showUpdateBar(){
+  try{
+    if(document.getElementById('update-bar')) return;
+    var bar=document.createElement('div'); bar.id='update-bar';
+    bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:99999;max-width:92%;width:420px;display:flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#241a0e,#1a140a);border:1px solid var(--brass,#d4b84a);border-radius:10px;padding:.6rem .7rem;box-shadow:0 8px 28px rgba(0,0,0,.45);font-family:\'Josefin Sans\',sans-serif;';
+    bar.innerHTML='<span style="flex:1;font-size:.78rem;line-height:1.35;color:#e8d8a0;">A new version of the app is available.</span>';
+    var go=document.createElement('button'); go.textContent='Refresh';
+    go.style.cssText='flex:none;min-height:36px;padding:.35rem .8rem;font-family:inherit;font-size:.78rem;font-weight:600;color:#1a140a;background:var(--brass,#d4b84a);border:none;border-radius:7px;cursor:pointer;';
+    var x=document.createElement('button'); x.setAttribute('aria-label','Dismiss'); x.textContent='✕';
+    x.style.cssText='flex:none;min-width:36px;min-height:36px;background:transparent;border:none;color:#9a8f7a;font-size:1rem;cursor:pointer;';
+    go.onclick=function(){ location.reload(); };
+    x.onclick=function(){ if(bar.parentNode) bar.parentNode.removeChild(bar); };
+    bar.appendChild(go); bar.appendChild(x); document.body.appendChild(bar);
+  }catch(e){}
 }
 
 // ── PWA INSTALL PROMPT ────────────────────────────────────
