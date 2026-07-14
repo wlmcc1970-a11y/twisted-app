@@ -6488,12 +6488,30 @@ window.addEventListener('load',function(){
     // iOS wrapper detection: Firebase web OAuth (popup/redirect) breaks inside WKWebView
     // ("auth/missing-initial-state"). Inside the app, the native shell runs Apple's sheet and
     // calls the callbacks below. Web + Android have no such handler → they keep the popup flow.
+    /* F-038 (2026-07-13): delete-account re-auth must NOT use a web OAuth popup inside the native wrapper
+       — web OAuth fails in WKWebView (the same 'missing initial state' failure that broke Apple sign-in).
+       Route re-auth through the SAME native bridge the sign-in buttons already use. Also check token
+       freshness FIRST, so we never delete the user's cloud doc and then fail or get cancelled. */
+    var pendingDeleteUid=null,pendingDeleteTimer=null;
+    /* SAFETY: the pending-delete flag must never outlive its prompt. If the native sheet is dismissed in a
+       way that reports neither success nor cancel, a stale flag could turn the user's NEXT sign-in into an
+       account deletion. So: it self-expires (3 min), any explicit sign-in clears it, and we re-check the uid. */
+    function clearPendingDelete(){pendingDeleteUid=null;if(pendingDeleteTimer){clearTimeout(pendingDeleteTimer);pendingDeleteTimer=null;}}
+    function armPendingDelete(uid){pendingDeleteUid=uid;if(pendingDeleteTimer)clearTimeout(pendingDeleteTimer);pendingDeleteTimer=setTimeout(function(){pendingDeleteUid=null;pendingDeleteTimer=null;},180000);}
+    function finishDelete(uid){return fsMod.deleteDoc(fsMod.doc(db,'users',uid)).catch(function(){}).then(function(){return auth.currentUser.delete();}).then(function(){setStatus('Your account and synced data were deleted.');});}
+    function reauthThenDelete(uid,isApple){
+      setStatus('Please confirm it’s you to finish deleting…');
+      if(isApple&&appleNative){try{armPendingDelete(uid);window.webkit.messageHandlers.startAppleSignIn.postMessage({});return;}catch(e){clearPendingDelete();}}
+      if(!isApple&&googleNative){try{armPendingDelete(uid);window.webkit.messageHandlers.startGoogleSignIn.postMessage({});return;}catch(e){clearPendingDelete();}}
+      var p=isApple?appleProvider:provider;
+      authMod.signInWithPopup(auth,p).then(function(){return finishDelete(uid);}).catch(function(){setStatus('Could not delete — please try again.');});
+    }
     var appleNative=/PWAShell/.test(navigator.userAgent)&&!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.startAppleSignIn);
-    window.__onNativeAppleCredential=function(idToken,rawNonce){try{setStatus('Signing in…');var cred=appleProvider.credential({idToken:idToken,rawNonce:rawNonce});authMod.signInWithCredential(auth,cred).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});}catch(e){setStatus('Sign-in didn’t complete — tap the button to try again');}};
-    window.__onNativeAppleError=function(reason){setStatus(reason==='canceled'?'Cloud sync (off)':'Sign-in didn’t complete — tap the button to try again');};
+    window.__onNativeAppleCredential=function(a,b){try{var cred=appleProvider.credential({idToken:a,rawNonce:b});if(pendingDeleteUid){var _u=pendingDeleteUid;clearPendingDelete();setStatus('Deleting your account…');authMod.signInWithCredential(auth,cred).then(function(){if(!auth.currentUser||auth.currentUser.uid!==_u){setStatus('Signed in.');return;}return finishDelete(_u);}).catch(function(){setStatus('Could not delete — please try again.');});return;}setStatus('Signing in…');authMod.signInWithCredential(auth,cred).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});}catch(e){clearPendingDelete();setStatus('Sign-in didn’t complete — tap the button to try again');}};
+    window.__onNativeAppleError=function(reason){if(pendingDeleteUid){clearPendingDelete();setStatus(reason==='canceled'?'Deletion canceled — your account was not deleted.':'Could not delete — please try again.');return;}setStatus(reason==='canceled'?'Cloud sync (off)':'Sign-in didn’t complete — tap the button to try again');};
     var googleNative=/PWAShell/.test(navigator.userAgent)&&!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.startGoogleSignIn);
-    window.__onNativeGoogleCredential=function(idToken,accessToken){try{setStatus('Signing in…');var cred=authMod.GoogleAuthProvider.credential(idToken,accessToken||null);authMod.signInWithCredential(auth,cred).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});}catch(e){setStatus('Sign-in didn’t complete — tap the button to try again');}};
-    window.__onNativeGoogleError=function(reason){setStatus(reason==='canceled'?'Cloud sync (off)':'Sign-in didn’t complete — tap the button to try again');};
+    window.__onNativeGoogleCredential=function(a,b){try{var cred=authMod.GoogleAuthProvider.credential(a,b||null);if(pendingDeleteUid){var _u=pendingDeleteUid;clearPendingDelete();setStatus('Deleting your account…');authMod.signInWithCredential(auth,cred).then(function(){if(!auth.currentUser||auth.currentUser.uid!==_u){setStatus('Signed in.');return;}return finishDelete(_u);}).catch(function(){setStatus('Could not delete — please try again.');});return;}setStatus('Signing in…');authMod.signInWithCredential(auth,cred).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});}catch(e){clearPendingDelete();setStatus('Sign-in didn’t complete — tap the button to try again');}};
+    window.__onNativeGoogleError=function(reason){if(pendingDeleteUid){clearPendingDelete();setStatus(reason==='canceled'?'Deletion canceled — your account was not deleted.':'Could not delete — please try again.');return;}setStatus(reason==='canceled'?'Cloud sync (off)':'Sign-in didn’t complete — tap the button to try again');};
     var pushTimer=null,currentUser=null,unsub=null;
     function docRef(uid){return fsMod.doc(db,'users',uid);}
     function pushMap(map){if(!currentUser)return;fsMod.setDoc(docRef(currentUser.uid),{blob:JSON.stringify(map),updatedAt:Date.now(),device:deviceId()}).catch(function(){});}
@@ -6501,13 +6519,13 @@ window.addEventListener('load',function(){
     function schedulePush(){if(!currentUser)return;if(pushTimer)clearTimeout(pushTimer);pushTimer=setTimeout(pushNow,1500);}
     try{var _set=Store.set.bind(Store),_del=Store.del.bind(Store);Store.set=function(k,v){_set(k,v);schedulePush();};Store.del=function(k){_del(k);schedulePush();};}catch(e){}
     var b=btnEl();
-    if(b){b.onclick=function(){if(currentUser){authMod.signOut(auth);}else{setStatus('Opening Google sign-in…');authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn\u2019t complete \u2014 tap the button to try again');});}};}
+    if(b){b.onclick=function(){clearPendingDelete();if(currentUser){authMod.signOut(auth);}else{setStatus('Opening Google sign-in…');authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn\u2019t complete \u2014 tap the button to try again');});}};}
     var gb=document.getElementById('google-signin-btn');
-    if(gb){gb.onclick=function(){setStatus('Opening Google sign-in…');if(googleNative){try{window.webkit.messageHandlers.startGoogleSignIn.postMessage({});return;}catch(e){}}authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
+    if(gb){gb.onclick=function(){clearPendingDelete();setStatus('Opening Google sign-in…');if(googleNative){try{window.webkit.messageHandlers.startGoogleSignIn.postMessage({});return;}catch(e){}}authMod.signInWithPopup(auth,provider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
     var ab=document.getElementById('apple-signin-btn');
-    if(ab){ab.onclick=function(){setStatus('Opening Apple sign-in…');if(appleNative){try{window.webkit.messageHandlers.startAppleSignIn.postMessage({});return;}catch(e){}}authMod.signInWithPopup(auth,appleProvider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
+    if(ab){ab.onclick=function(){clearPendingDelete();setStatus('Opening Apple sign-in…');if(appleNative){try{window.webkit.messageHandlers.startAppleSignIn.postMessage({});return;}catch(e){}}authMod.signInWithPopup(auth,appleProvider).catch(function(e){setStatus('Sign-in didn’t complete — tap the button to try again');});};}
     var delBtn=document.getElementById('delete-account-btn');
-    if(delBtn){delBtn.onclick=function(){if(!currentUser){setStatus('Sign in first to manage your account.');return;}if(!window.confirm('Permanently delete your synced cloud data and your account? This cannot be undone.'))return;setStatus('Deleting your account…');var uid=currentUser.uid;fsMod.deleteDoc(fsMod.doc(db,'users',uid)).catch(function(){}).then(function(){return currentUser.delete();}).then(function(){setStatus('Your account and synced data were deleted.');}).catch(function(e){if(e&&e.code==='auth/requires-recent-login'){setStatus('Please sign in again to confirm deletion.');var p=(currentUser.providerData[0]&&currentUser.providerData[0].providerId==='apple.com')?appleProvider:provider;authMod.signInWithPopup(auth,p).then(function(){return fsMod.deleteDoc(fsMod.doc(db,'users',uid)).catch(function(){}).then(function(){return auth.currentUser.delete();});}).then(function(){setStatus('Your account and synced data were deleted.');}).catch(function(){setStatus('Could not delete — please try again.');});}else{setStatus('Could not delete — please try again.');}});};}
+    if(delBtn){delBtn.onclick=function(){if(!currentUser){setStatus('Sign in first to manage your account.');return;}if(!window.confirm('Permanently delete your synced cloud data and your account? This cannot be undone.'))return;var uid=currentUser.uid;var isApple=!!(currentUser.providerData[0]&&currentUser.providerData[0].providerId==='apple.com');setStatus('Deleting your account…');currentUser.getIdTokenResult().then(function(r){var t=(r&&r.authTime)?new Date(r.authTime).getTime():0;if(t&&(Date.now()-t)<4*60*1000){return finishDelete(uid);}return reauthThenDelete(uid,isApple);}).catch(function(e){if(e&&e.code==='auth/requires-recent-login'){return reauthThenDelete(uid,isApple);}setStatus('Could not delete — please try again.');});};}
     /* popup keeps auth in-window; no redirect result to process */
     authMod.onAuthStateChanged(auth,function(user){
       currentUser=user;if(unsub){unsub();unsub=null;}
