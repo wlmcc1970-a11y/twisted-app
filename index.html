@@ -1448,12 +1448,12 @@ header{
       <button class="nav-btn" data-panel="rules" data-icon="rules" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-rules"/></svg> Rules</button>
       <button class="nav-btn" data-panel="characters" data-icon="characters" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-characters"/></svg> Characters</button>
       <button class="nav-btn" data-panel="abilities" data-icon="abilities" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-abilities"/></svg> Abilities</button>
-      <button class="nav-btn" data-panel="alchemancy" data-icon="alchemancy" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-alchemancy"/></svg> Alchemancy</button>
-      <button class="nav-btn" data-panel="canopic" data-icon="canopic" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-canopic"/></svg> Canopic</button>
-      <button class="nav-btn" data-panel="eye" data-icon="eye" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-eye"/></svg> Eye</button>
-      <button class="nav-btn" data-panel="delights" data-icon="delights" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-delights"/></svg> Delights</button>
+      <button class="nav-btn" translate="no" data-panel="alchemancy" data-icon="alchemancy" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-alchemancy"/></svg> Alchemancy</button>
+      <button class="nav-btn" translate="no" data-panel="canopic" data-icon="canopic" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-canopic"/></svg> Canopic</button>
+      <button class="nav-btn" translate="no" data-panel="eye" data-icon="eye" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-eye"/></svg> Eye</button>
+      <button class="nav-btn" translate="no" data-panel="delights" data-icon="delights" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-delights"/></svg> Delights</button>
       <button class="nav-btn" data-panel="features" data-icon="features" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-features"/></svg> Features</button>
-      <button class="nav-btn" data-panel="company" data-icon="company" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-company"/></svg> Company</button>
+      <button class="nav-btn" translate="no" data-panel="company" data-icon="company" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-company"/></svg> Company</button>
       <button class="nav-btn" data-panel="missions" data-icon="missions" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-missions"/></svg> Missions</button>
       <button class="nav-btn game-hidden" data-panel="campaign" data-icon="campaign" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-campaign"/></svg> Campaign</button>
       <button class="nav-btn" data-panel="dice" data-icon="dice" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-dice"/></svg> Dice</button>
@@ -2406,7 +2406,7 @@ reg('characters',function(){
     {key:'guild',label:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#5C5C5C;vertical-align:middle;margin-right:.3em"></span>Guild'},
     {key:'favourites',label:'★ Favourites'},
   ];
-  const tabs=factions.map((f,i)=>`<button class="faction-tab${i===0?' active':''}" onclick="showFaction('${f.key}',this)">${f.label}</button>`).join('');
+  const tabs=factions.map((f,i)=>`<button class="faction-tab${i===0?' active':''}" translate="no" onclick="showFaction('${f.key}',this)">${f.label}</button>`).join('');
   const panels=factions.map((f,i)=>{
     if(f.key==='favourites'){
       const favs=Object.values(CHARS).flat().filter(c=>Store.get('fav_'+c.name,false));
@@ -6406,52 +6406,356 @@ window.addEventListener('load',function(){
 <div id="lang-list" translate="no" style="display:flex;flex-direction:column;gap:.25rem"></div>
 </div>
 <style>
-.lang-option{background:transparent;border:1px solid rgba(212,184,74,.15);color:var(--parchment);font-family:'Josefin Sans',sans-serif;font-size:.78rem;padding:.4rem .7rem;border-radius:5px;cursor:pointer;text-align:left;transition:all .2s}
+.lang-option{background:transparent;border:1px solid rgba(212,184,74,.15);color:var(--parchment);font-family:'Josefin Sans',sans-serif;font-size:.78rem;padding:.4rem .7rem;border-radius:5px;cursor:pointer;text-align:left;transition:all .2s;min-height:36px;width:100%;display:flex;align-items:center}
 .lang-option:hover{border-color:var(--brass);background:rgba(212,184,74,.08);color:var(--brass-light)}
+.lang-option.xl-on{border-color:var(--brass);background:rgba(212,184,74,.16);color:var(--brass-light)}
+#translate-popup{max-width:min(92vw,280px)}
+#translate-popup .xl-note{font-family:'Josefin Sans',sans-serif;font-size:.66rem;line-height:1.4;color:var(--brass-dark);margin:.1rem 0 .45rem;white-space:normal}
+#translate-popup .xl-current{font-family:'Josefin Sans',sans-serif;font-size:.7rem;line-height:1.4;color:var(--brass-light);white-space:normal}
+#translate-popup .xl-current:empty{display:none}
+/* ---- translate progress bar (never itself translated) ---- */
+#xlbar{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);z-index:1300;
+  bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));min-width:min(92vw,340px);max-width:94vw;
+  display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;border-radius:8px;
+  background:rgba(42,38,30,.97);border:1px solid var(--brass);color:var(--parchment);
+  font-family:'Josefin Sans',sans-serif;font-size:.8rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 14px rgba(212,184,74,.12);
+  opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;overflow:hidden}
+#xlbar.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#xlbar .xlmsg{flex:1 1 auto}
+#xlbar .xlpct{flex:0 0 auto;font-variant-numeric:tabular-nums;opacity:.85}
+#xlbar .xlfill{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--brass);transition:width .25s ease}
 </style>
 <script>
 (function(){
-  const langs=[
-    ['af','Afrikaans'],['sq','Albanian'],['ar','Arabic'],['hy','Armenian'],['az','Azerbaijani'],
-    ['eu','Basque'],['be','Belarusian'],['bn','Bengali'],['bs','Bosnian'],['bg','Bulgarian'],
-    ['ca','Catalan'],['zh-CN','Chinese (Simplified)'],['zh-TW','Chinese (Traditional)'],
-    ['hr','Croatian'],['cs','Czech'],['da','Danish'],['nl','Dutch'],['et','Estonian'],
-    ['fi','Finnish'],['fr','French'],['gl','Galician'],['ka','Georgian'],['de','German'],
-    ['el','Greek'],['gu','Gujarati'],['ht','Haitian Creole'],['he','Hebrew'],['hi','Hindi'],
-    ['hu','Hungarian'],['is','Icelandic'],['id','Indonesian'],['ga','Irish'],['it','Italian'],
-    ['ja','Japanese'],['kn','Kannada'],['ko','Korean'],['lv','Latvian'],['lt','Lithuanian'],
-    ['mk','Macedonian'],['ms','Malay'],['mt','Maltese'],['no','Norwegian'],['fa','Persian'],
-    ['pl','Polish'],['pt','Portuguese'],['ro','Romanian'],['ru','Russian'],['sr','Serbian'],
-    ['sk','Slovak'],['sl','Slovenian'],['es','Spanish'],['sw','Swahili'],['sv','Swedish'],
-    ['ta','Tamil'],['te','Telugu'],['th','Thai'],['tr','Turkish'],['uk','Ukrainian'],
-    ['ur','Urdu'],['vi','Vietnamese'],['cy','Welsh']
-  ];
+/* ============================================================
+   TRANSLATE — native-first, three honest paths (ported from MERCS 2026-07-25)
+   1) Chrome/Edge (incl. the wrapped Android TWA): the browser's BUILT-IN
+      on-device Translator API. Translates in place, no server, and once a
+      language pack is downloaded it keeps working with no connection.
+   2) The wrapped iOS app: hands the page to Safari via Twisted's own
+      translatePage bridge; Safari's on-device translation takes over.
+   3) Anything else: the legacy Google website-translator widget, now with a
+      progress bar and an honest failure message instead of silence.
+   Replaces the old translate.google.com/?u= proxy, which navigated the user
+   off-origin to a translate.goog mirror — losing the service worker, offline
+   support and the signed-in session inside the wrapped apps.
+   Protected Twisted vocabulary carries translate="no" and is never sent.
+   ============================================================ */
+const XLANGS=[
+ ['af','Afrikaans'],['sq','Albanian'],['ar','Arabic'],['hy','Armenian'],['az','Azerbaijani'],
+ ['eu','Basque'],['be','Belarusian'],['bn','Bengali'],['bs','Bosnian'],['bg','Bulgarian'],
+ ['ca','Catalan'],['zh-CN','Chinese (Simplified)'],['zh-TW','Chinese (Traditional)'],['hr','Croatian'],
+ ['cs','Czech'],['da','Danish'],['nl','Dutch'],['et','Estonian'],['fi','Finnish'],['fr','French'],
+ ['gl','Galician'],['ka','Georgian'],['de','German'],['el','Greek'],['gu','Gujarati'],
+ ['ht','Haitian Creole'],['he','Hebrew'],['hi','Hindi'],['hu','Hungarian'],['is','Icelandic'],
+ ['id','Indonesian'],['ga','Irish'],['it','Italian'],['ja','Japanese'],['kn','Kannada'],
+ ['ko','Korean'],['lv','Latvian'],['lt','Lithuanian'],['mk','Macedonian'],['ms','Malay'],
+ ['mt','Maltese'],['no','Norwegian'],['fa','Persian'],['pl','Polish'],['pt','Portuguese'],
+ ['ro','Romanian'],['ru','Russian'],['sr','Serbian'],['sk','Slovak'],['sl','Slovenian'],
+ ['es','Spanish'],['sw','Swahili'],['sv','Swedish'],['ta','Tamil'],['te','Telugu'],
+ ['th','Thai'],['tr','Turkish'],['uk','Ukrainian'],['ur','Urdu'],['vi','Vietnamese'],['cy','Welsh']
+];
+function xlName(code){const h=XLANGS.find(l=>l[0]===code);return h?h[1]:code;}
+
+/* ---------- platform ---------- */
+const XL_IOS_WRAP=/PWAShell/.test(navigator.userAgent||'');
+function xlIosBridge(){try{return !!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.translatePage);}catch(e){return false;}}
+function xlHasNative(){try{return typeof Translator!=='undefined'&&typeof Translator.create==='function';}catch(e){return false;}}
+
+/* ---------- state ---------- */
+const XL={lang:'',busy:false,tr:null,trLang:'',obs:null,touched:[],cache:null,pend:null};
+const XL_LANGKEY='twisted.v1.xlang';
+const XL_CACHEKEY='twisted.v1.xlcache';
+
+function xlToast(m){try{if(typeof showToast==='function')showToast(m,3200);}catch(e){}}
+
+function xlCache(){if(XL.cache)return XL.cache;
+  try{XL.cache=JSON.parse(localStorage.getItem(XL_CACHEKEY)||'{}');}catch(e){XL.cache={};}
+  if(!XL.cache||typeof XL.cache!=='object')XL.cache={};
+  return XL.cache;}
+function xlCacheSave(){try{const s=JSON.stringify(XL.cache||{});
+    if(s.length>700000){XL.cache={};return;}                 /* bounded: drop rather than grow forever */
+    localStorage.setItem(XL_CACHEKEY,s);}catch(e){}}
+
+/* ---------- progress bar (never itself translated) ---------- */
+function xlBar(msg,pct){
+  let b=document.getElementById('xlbar');
+  if(!b){b=document.createElement('div');b.id='xlbar';b.setAttribute('translate','no');
+    b.innerHTML='<span class="xlmsg"></span><span class="xlpct"></span><i class="xlfill"></i>';
+    document.body.appendChild(b);}
+  b.querySelector('.xlmsg').textContent=msg||'';
+  b.querySelector('.xlpct').textContent=(pct==null?'':pct+'%');
+  b.querySelector('.xlfill').style.width=(pct==null?0:Math.max(2,Math.min(100,pct)))+'%';
+  b.classList.add('show');
+}
+function xlBarHide(){const b=document.getElementById('xlbar');if(b)b.classList.remove('show');}
+
+/* ---------- protected Twisted vocabulary ----------
+   A text node whose WHOLE value IS one of the game's proper nouns is never sent
+   for translation, wherever it appears (nav labels, tabs, headings, chips).
+   Prose that merely mentions a term still translates — terms inside sentences are
+   protected by markup (translate="no" / tn()), not by this list. */
+const XL_TERMS=new Set(['twisted','the engine','engine','company','companies',
+  'delights','delight','dr disraeli’s delights','dr disraeli\'s delights',
+  'invocation','invocations','alchemancy','alchemancer','alchemancers','alchemantic',
+  'canopic','canopic jar','canopic jars','eye','eye of the engine',
+  'tarot','tarot of taxing tasks','taxing tasks',
+  'dickensians','servants','servants of the engine','scions','scions of the sands',
+  'guild','guild of harmony','demented games','digirune studios',
+  'urkin','essence','essences','elemental essence','elemental essences',
+  'spirit','spirits','elemental spirit','the watchers','scions of the sands']);
+
+/* Names drawn from Twisted's own data, gathered once and cached. */
+let XL_NAMES=null;
+function xlNames(){
+  if(XL_NAMES)return XL_NAMES;
+  const s=new Set();
+  const add=v=>{if(typeof v==='string'&&v.trim())s.add(v.trim().toLowerCase());};
+  const pull=(coll,key)=>{try{
+    if(!coll)return;
+    const arrs=Array.isArray(coll)?[coll]:Object.values(coll);
+    arrs.forEach(a=>{if(Array.isArray(a))a.forEach(o=>{if(o&&typeof o==='object')add(o[key]);});});
+  }catch(e){}};
+  try{if(typeof CHARS!=='undefined')pull(CHARS,'name');}catch(e){}
+  try{if(typeof ABILITIES!=='undefined')pull(ABILITIES,'n');}catch(e){}
+  try{if(typeof INVOC!=='undefined')pull(INVOC,'n');}catch(e){}
+  try{if(typeof SPIRITS!=='undefined')pull(SPIRITS,'n');}catch(e){}
+  try{if(typeof DELIGHTS!=='undefined')pull(DELIGHTS,'n');}catch(e){}
+  try{if(typeof TAROT!=='undefined')pull(TAROT,'n');}catch(e){}
+  try{if(typeof OBJECTIVES!=='undefined')pull(OBJECTIVES,'n');}catch(e){}
+  XL_NAMES=s;
+  return XL_NAMES;
+}
+function xlProtected(t){
+  const k=t.toLowerCase();
+  if(XL_TERMS.has(k))return true;
+  return xlNames().has(k);
+}
+
+/* ---------- which text nodes may be translated ---------- */
+const XL_SKIP='[translate="no"],.notranslate,#gte,#xlbar,#toast,#translate-popup,script,style,noscript,svg,select,textarea,input,code,pre';
+function xlNodes(root){
+  const out=[];
+  const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,null);
+  let n;
+  while((n=w.nextNode())){
+    const v=n.nodeValue;if(!v)continue;
+    const t=v.trim();
+    if(t.length<2)continue;
+    if(!/[A-Za-z]{2}/.test(t))continue;                       /* numbers/glyphs alone: nothing to translate */
+    if(xlProtected(t))continue;                               /* a Twisted proper noun on its own stays English */
+    const p=n.parentElement;
+    if(!p||p.closest(XL_SKIP))continue;
+    out.push(n);
+  }
+  return out;
+}
+
+/* ---------- apply / revert ---------- */
+function xlSet(n,text){
+  const t=n.nodeValue.trim();
+  XL.touched.push([n,n.nodeValue]);
+  n.nodeValue=n.nodeValue.replace(t,text);
+}
+function xlRevert(){
+  for(let i=XL.touched.length-1;i>=0;i--){try{XL.touched[i][0].nodeValue=XL.touched[i][1];}catch(e){}}
+  XL.touched=[];
+}
+
+/* ---------- native (Chrome/Edge on-device) ---------- */
+async function xlNativeTranslate(code,nodes,quiet){
+  const cache=xlCache(),pfx=code+'';
+  const uniq=new Map();
+  nodes.forEach(n=>{const k=n.nodeValue.trim();if(!uniq.has(k))uniq.set(k,[]);uniq.get(k).push(n);});
+  const need=[];
+  uniq.forEach((_,k)=>{if(cache[pfx+k]==null)need.push(k);});
+  if(need.length){
+    if(!XL.tr||XL.trLang!==code){
+      if(!quiet)xlBar('Preparing '+xlName(code)+'…',null);
+      XL.tr=await Translator.create({sourceLanguage:'en',targetLanguage:code,
+        monitor(m){m.addEventListener('downloadprogress',e=>{
+          if(!quiet)xlBar('Downloading '+xlName(code)+' — one time only…',Math.round((e.loaded||0)*100));});}});
+      XL.trLang=code;
+    }
+    let done=0;const queue=need.slice();
+    const worker=async()=>{while(queue.length){const s=queue.shift();
+      try{cache[pfx+s]=await XL.tr.translate(s);}catch(e){cache[pfx+s]=s;}
+      done++;if(!quiet&&(done%4===0||done===need.length))xlBar('Translating…',Math.round(done/need.length*100));}};
+    await Promise.all(Array.from({length:Math.min(6,queue.length)},worker));
+    xlCacheSave();
+  }
+  uniq.forEach((list,k)=>{const out=cache[pfx+k];if(out==null||out===k)return;list.forEach(n=>xlSet(n,out));});
+}
+
+/* Re-translate anything the app renders later (panels, modals, search results). */
+function xlObserve(){
+  if(XL.obs||!('MutationObserver' in window))return;
+  XL.obs=new MutationObserver(muts=>{
+    if(!XL.lang||XL.busy)return;
+    let added=false;
+    for(const m of muts){if(m.addedNodes&&m.addedNodes.length){added=true;break;}}
+    if(!added)return;
+    clearTimeout(XL.pend);
+    XL.pend=setTimeout(async()=>{
+      if(!XL.lang||XL.busy)return;
+      const fresh=xlNodes(document.body).filter(n=>!XL.touched.some(p=>p[0]===n));
+      if(!fresh.length)return;
+      XL.busy=true;
+      try{await xlNativeTranslate(XL.lang,fresh,true);}catch(e){}
+      XL.busy=false;
+    },260);
+  });
+  XL.obs.observe(document.body,{childList:true,subtree:true});
+}
+function xlUnobserve(){if(XL.obs){XL.obs.disconnect();XL.obs=null;}clearTimeout(XL.pend);}
+
+/* ---------- legacy Google widget (fallback only) ---------- */
+let _gteState='idle';
+function _gteInject(){
+  if(_gteState==='loading'||_gteState==='ready')return;
+  _gteState='loading';
+  if(!document.getElementById('gte')){
+    const h=document.createElement('div');h.id='gte';h.setAttribute('translate','no');
+    h.style.cssText='position:fixed;left:-9999px;top:-9999px;';
+    document.body.appendChild(h);
+  }
+  window.googleTranslateElementInit=function(){
+    try{new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'gte');_gteState='ready';}
+    catch(e){_gteState='failed';}
+  };
+  const sc=document.createElement('script');
+  sc.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  sc.onerror=()=>{_gteState='failed';};
+  document.head.appendChild(sc);
+}
+function xlLegacy(code){
+  _gteInject();
+  const probe=xlNodes(document.body)[0];
+  const before=probe?probe.nodeValue:'';
+  xlBar(code?'Translating…':'Restoring English…',null);
+  const deadline=Date.now()+30000;
+  let applied=false;
+  const poll=setInterval(()=>{
+    if(_gteState==='failed'){clearInterval(poll);xlBarHide();
+      xlToast('Translation is unavailable right now — please try again with a connection.');return;}
+    const sel=document.querySelector('.goog-te-combo');
+    if(sel&&!applied){sel.value=code;sel.dispatchEvent(new Event('change'));applied=true;}
+    const changed=probe&&probe.nodeValue!==before;
+    if(changed||(!code&&applied)){clearInterval(poll);xlBarHide();
+      xlToast(code?('Translated to '+xlName(code)):'Showing the original English');return;}
+    if(Date.now()>deadline){clearInterval(poll);xlBarHide();
+      xlToast('Translation is taking too long — please try again with a connection.');}
+  },400);
+}
+
+/* ---------- popup chrome (Twisted's own brass popup) ---------- */
+function xlClosePopup(){const p=document.getElementById('translate-popup');
+  if(p){p.style.opacity='0';p.style.pointerEvents='none';}}
+function xlMarkActive(){
+  const cur=document.getElementById('xl-current');
+  if(cur)cur.textContent=XL.lang?(xlName(XL.lang)+' is active.'):'';
+  document.querySelectorAll('#lang-list .lang-option').forEach(b=>{
+    b.classList.toggle('xl-on',(b.dataset.lang||'')===XL.lang);});
+}
+
+/* ---------- the one entry point ---------- */
+async function setTranslate(code){
+  xlClosePopup();
+  if(XL.busy)return;
+  if(!xlHasNative()){xlLegacy(code);XL.lang=code||'';xlMarkActive();return;}
+  XL.busy=true;
+  try{
+    xlUnobserve();
+    xlRevert();                                   /* always start from the real English */
+    if(!code){XL.lang='';try{localStorage.removeItem(XL_LANGKEY);}catch(e){}
+      xlBarHide();xlMarkActive();xlToast('Showing the original English');return;}
+    xlBar('Preparing '+xlName(code)+'…',null);
+    await xlNativeTranslate(code,xlNodes(document.body),false);
+    XL.lang=code;
+    try{localStorage.setItem(XL_LANGKEY,code);}catch(e){}
+    xlBarHide();xlMarkActive();
+    xlToast('Translated to '+xlName(code)+' — game terms stay in English');
+    xlObserve();
+  }catch(e){
+    xlRevert();XL.lang='';xlBarHide();xlMarkActive();
+    xlToast('Couldn’t translate — a connection is needed the first time you use a language.');
+  }finally{XL.busy=false;}
+}
+window.setTranslate=setTranslate;
+
+/* Re-apply the chosen language on launch, but ONLY if its pack is already on the
+   device — never surprise anyone with a download or a wait at startup. */
+async function xlRestore(){
+  let saved='';try{saved=localStorage.getItem(XL_LANGKEY)||'';}catch(e){}
+  if(!saved||!xlHasNative()||XL_IOS_WRAP)return;
+  try{
+    const a=await Translator.availability({sourceLanguage:'en',targetLanguage:saved});
+    if(a!=='available')return;
+    XL.busy=true;
+    await xlNativeTranslate(saved,xlNodes(document.body),true);
+    XL.lang=saved;XL.busy=false;xlMarkActive();xlObserve();
+  }catch(e){XL.busy=false;}
+}
+window.xlRestore=xlRestore;
+
+/* ---------- iOS: hand the page to Safari ---------- */
+function xlSafariHandoff(){
+  try{if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.translatePage){
+    window.webkit.messageHandlers.translatePage.postMessage(location.href);xlClosePopup();return;}}catch(e){}
+  window.open(location.href,'_blank','noopener');xlClosePopup();
+}
+window.xlSafariHandoff=xlSafariHandoff;
+
+/* ---------- picker ---------- */
+function xlBuildPicker(){
   const list=document.getElementById('lang-list');
-  const siteUrl=window.location.hostname?window.location.origin+window.location.pathname:'https://twisted.digirunestudios.com/';
-  // iOS wrapper: the translate.google.com proxy is blocked in-webview ("unusual traffic").
-  // Hand the current page to Safari's built-in Translate (reliable, respects translate="no",
-  // works iOS 15+). Web + Android keep the full language list below, unchanged.
-  var translateNative=/PWAShell/.test(navigator.userAgent)&&!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.translatePage);
-  if(translateNative){
-    var _tt=document.querySelector('#translate-popup > div');if(_tt)_tt.textContent='🌐 Translate';
-    var _tb=document.createElement('button');_tb.className='lang-option';_tb.style.textAlign='center';_tb.textContent='Translate this page';
-    _tb.onclick=function(){try{window.webkit.messageHandlers.translatePage.postMessage(window.location.href);}catch(e){}var p=document.getElementById('translate-popup');if(p){p.style.opacity='0';p.style.pointerEvents='none';}};
-    list.appendChild(_tb);
-    var _tn=document.createElement('div');_tn.setAttribute('translate','no');_tn.style.cssText='font-family:\'Josefin Sans\',sans-serif;font-size:.66rem;line-height:1.35;color:var(--brass-dark);margin-top:.5rem;';_tn.textContent='Opens in Safari — tap “aA” in the toolbar, choose Translate, then your language.';
-    list.appendChild(_tn);
+  if(!list)return;
+  list.innerHTML='';
+  const head=document.querySelector('#translate-popup > div');
+
+  if(XL_IOS_WRAP&&xlIosBridge()){
+    if(head)head.textContent='🌐 Translate';
+    const b=document.createElement('button');
+    b.className='lang-option';b.style.textAlign='center';b.textContent='Translate this page';
+    b.onclick=xlSafariHandoff;
+    list.appendChild(b);
+    const note=document.createElement('div');
+    note.className='xl-note';note.setAttribute('translate','no');
+    note.textContent='Opens in Safari, which translates it on your device. Tap “aA” in the Safari toolbar, choose Translate, then your language. Core game terms stay in English.';
+    list.appendChild(note);
     return;
   }
-  langs.forEach(([code,name])=>{
+
+  if(head)head.textContent='🌐 Select Language';
+  const cur=document.createElement('div');
+  cur.className='xl-current';cur.id='xl-current';cur.setAttribute('translate','no');
+  list.appendChild(cur);
+
+  const note=document.createElement('div');
+  note.className='xl-note';note.setAttribute('translate','no');
+  note.textContent=xlHasNative()
+    ? 'Translates this page on your device. The first use of a language downloads it once; after that it works with no connection. Core game terms stay in English.'
+    : 'Translates this page. Core game terms stay in English. Needs an internet connection.';
+  list.appendChild(note);
+
+  const orig=document.createElement('button');
+  orig.className='lang-option';orig.dataset.lang='';orig.textContent='Show original (English)';
+  orig.onclick=function(){setTranslate('');};
+  list.appendChild(orig);
+
+  XLANGS.forEach(function(l){
     const btn=document.createElement('button');
-    btn.className='lang-option';
-    btn.textContent=name;
-    btn.onclick=function(){
-      window.open('https://translate.google.com/translate?sl=en&tl='+code+'&u='+encodeURIComponent(siteUrl),'_blank');
-      var p=document.getElementById('translate-popup');
-      p.style.opacity='0';p.style.pointerEvents='none';
-    };
+    btn.className='lang-option';btn.dataset.lang=l[0];btn.textContent=l[1];
+    btn.onclick=function(){setTranslate(l[0]);};
     list.appendChild(btn);
   });
+  xlMarkActive();
+}
+
+xlBuildPicker();
+if(document.readyState!=='loading')xlRestore();
+else document.addEventListener('DOMContentLoaded',xlRestore);
 })();
 </script>
 <script>

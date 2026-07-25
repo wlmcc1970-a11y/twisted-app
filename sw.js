@@ -4,7 +4,7 @@
 // shell only when offline. Static assets/fonts/Firebase SDK stay cache-first for speed + offline.
 // Bump CACHE when deploying updates (keep it in lockstep with the on-screen version stamp).
 
-const CACHE='twisted-v1017';
+const CACHE='twisted-v1018';
 const FONT_CACHE='twisted-fonts-v1';
 const LIB_CACHE='twisted-libs-v1';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon-180.png','./icons/twisted-logo.png'];
@@ -67,7 +67,9 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  // Everything else (icons/static same-origin assets): cache-first, refresh in background on success
+  // Everything else (icons/static same-origin assets): cache-first, refresh in background on success.
+  // NOTE: a failed sub-resource must NOT fall back to the HTML shell — handing index.html back for a
+  // missing script or image is worse than an honest failure. Navigations are handled above.
   e.respondWith(
     caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
       if(res&&res.status===200&&res.type==='basic'){
@@ -75,6 +77,6 @@ self.addEventListener('fetch',e=>{
         caches.open(CACHE).then(c=>c.put(e.request,clone));
       }
       return res;
-    }).catch(()=>caches.match('./index.html').then(r=>r||caches.match('./'))))
+    }).catch(()=>new Response('',{status:504,statusText:'Offline'})))
   );
 });
