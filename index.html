@@ -1443,20 +1443,20 @@ header{
       </div>
     </div>
     <nav id="main-nav" role="navigation" aria-label="Main navigation">
-      <button class="nav-btn active" data-panel="welcome" data-icon="home" role="tab" aria-selected="true"><svg class="gi" aria-hidden="true"><use href="#gi-home"/></svg> Home</button>
-      <button class="nav-btn game-hidden" data-panel="lore" data-icon="lore" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-lore"/></svg> Lore</button>
-      <button class="nav-btn" data-panel="rules" data-icon="rules" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-rules"/></svg> Rules</button>
-      <button class="nav-btn" data-panel="characters" data-icon="characters" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-characters"/></svg> Characters</button>
-      <button class="nav-btn" data-panel="abilities" data-icon="abilities" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-abilities"/></svg> Abilities</button>
+      <button translate="no" class="nav-btn active" data-panel="welcome" data-icon="home" role="tab" aria-selected="true"><svg class="gi" aria-hidden="true"><use href="#gi-home"/></svg> Home</button>
+      <button translate="no" class="nav-btn game-hidden" data-panel="lore" data-icon="lore" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-lore"/></svg> Lore</button>
+      <button translate="no" class="nav-btn" data-panel="rules" data-icon="rules" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-rules"/></svg> Rules</button>
+      <button translate="no" class="nav-btn" data-panel="characters" data-icon="characters" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-characters"/></svg> Characters</button>
+      <button translate="no" class="nav-btn" data-panel="abilities" data-icon="abilities" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-abilities"/></svg> Abilities</button>
       <button class="nav-btn" translate="no" data-panel="alchemancy" data-icon="alchemancy" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-alchemancy"/></svg> Alchemancy</button>
       <button class="nav-btn" translate="no" data-panel="canopic" data-icon="canopic" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-canopic"/></svg> Canopic</button>
       <button class="nav-btn" translate="no" data-panel="eye" data-icon="eye" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-eye"/></svg> Eye</button>
       <button class="nav-btn" translate="no" data-panel="delights" data-icon="delights" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-delights"/></svg> Delights</button>
-      <button class="nav-btn" data-panel="features" data-icon="features" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-features"/></svg> Features</button>
+      <button translate="no" class="nav-btn" data-panel="features" data-icon="features" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-features"/></svg> Features</button>
       <button class="nav-btn" translate="no" data-panel="company" data-icon="company" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-company"/></svg> Company</button>
-      <button class="nav-btn" data-panel="missions" data-icon="missions" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-missions"/></svg> Missions</button>
-      <button class="nav-btn game-hidden" data-panel="campaign" data-icon="campaign" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-campaign"/></svg> Campaign</button>
-      <button class="nav-btn" data-panel="dice" data-icon="dice" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-dice"/></svg> Dice</button>
+      <button translate="no" class="nav-btn" data-panel="missions" data-icon="missions" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-missions"/></svg> Missions</button>
+      <button translate="no" class="nav-btn game-hidden" data-panel="campaign" data-icon="campaign" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-campaign"/></svg> Campaign</button>
+      <button translate="no" class="nav-btn" data-panel="dice" data-icon="dice" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-dice"/></svg> Dice</button>
       <a href="https://dementedgamesstore.myshopify.com/" target="_blank" rel="noopener" class="nav-btn game-hidden" data-icon="shop" style="text-decoration:none;color:inherit" translate="no"><svg class="gi" aria-hidden="true"><use href="#gi-shop"/></svg> Shop Twisted</a>
     </nav>
   </div>
@@ -1935,12 +1935,12 @@ function eeSigilHTML(key,inlineStyle){
       {icon:'🎲',title:'Dice Roller',desc:'Rolls & damage calc',panel:'dice'},
     ].map(c=>`<div class="welcome-card" onclick="navTo('${c.panel}')">
       <svg class="wc-icon" aria-hidden="true"><use href="#gi-${c.panel}"/></svg>
-      <div class="wc-title">${c.title}</div>
+      <div class="wc-title" translate="no">${c.title}</div>
       <div class="wc-desc">${c.desc}</div>
     </div>`).join('')}
     <div class="welcome-card" onclick="toggleSearch()" style="border-color:rgba(212,184,74,.28)">
       <svg class="wc-icon" aria-hidden="true"><use href="#gi-search"/></svg>
-      <div class="wc-title">Search</div>
+      <div class="wc-title" translate="no">Search</div>
       <div class="wc-desc">Find anything instantly</div>
     </div>
     <a href="https://dementedgamesstore.myshopify.com/" target="_blank" rel="noopener" class="welcome-card" style="text-decoration:none;color:inherit;border-color:rgba(212,184,74,.28)">
@@ -4468,7 +4468,7 @@ function archiveEnsureArchivesCard(){
   card.setAttribute('role','button');
   card.setAttribute('tabindex','0');
   card.setAttribute('aria-label','Archives \u2014 The Archivist\u2019s Letter');
-  card.innerHTML='<div style="font-size:1.8rem;margin-bottom:.45rem;line-height:1" aria-hidden="true">\ud83d\udcdc</div><div class="wc-title">Archives</div><div class="wc-desc">The Archivist\u2019s Letter</div>';
+  card.innerHTML='<div style="font-size:1.8rem;margin-bottom:.45rem;line-height:1" aria-hidden="true">\ud83d\udcdc</div><div class="wc-title" translate="no">Archives</div><div class="wc-desc">The Archivist\u2019s Letter</div>';
   const open=function(){
     archiveOpenLetter();
     const s=archiveGetState();
@@ -6413,6 +6413,14 @@ window.addEventListener('load',function(){
 #translate-popup .xl-note{font-family:'Josefin Sans',sans-serif;font-size:.66rem;line-height:1.4;color:var(--brass-dark);margin:.1rem 0 .45rem;white-space:normal}
 #translate-popup .xl-current{font-family:'Josefin Sans',sans-serif;font-size:.7rem;line-height:1.4;color:var(--brass-light);white-space:normal}
 #translate-popup .xl-current:empty{display:none}
+/* ---- Google Translate Element: suppress injected banner/offset/tooltip ----
+   The legacy widget (used when the browser has no on-device Translator API — which
+   includes the wrapped Android app) injects a toolbar iframe at the top of the page and
+   pushes <body> down with an inline top offset. Both are hidden here. Matches MERCS. ---- */
+.goog-te-banner-frame,.skiptranslate{display:none!important}
+body{top:0!important}
+#goog-gt-tt,.goog-tooltip,.goog-te-balloon-frame{display:none!important}
+#gte{display:none!important}
 /* ---- translate progress bar (never itself translated) ---- */
 #xlbar{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);z-index:1300;
   bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));min-width:min(92vw,340px);max-width:94vw;
@@ -6629,6 +6637,27 @@ function _gteInject(){
   sc.onerror=()=>{_gteState='failed';};
   document.head.appendChild(sc);
 }
+/* Restoring the original English on the legacy path.
+   Setting .goog-te-combo back to "" does NOT reliably untranslate — verified failing on the
+   wrapped Android app and on iPhone. The widget's own state lives in the `googtrans` cookie,
+   so the deterministic restore is: clear that cookie on every scope it may have been set
+   under, forget our saved choice, and reload. Everything is service-worker cached, so the
+   reload is fast and the app restores the panel you were on. */
+function xlClearGoogTrans(){
+  var host=location.hostname, parts=host.split('.');
+  var domains=['',host,'.'+host];
+  if(parts.length>2)domains.push('.'+parts.slice(-2).join('.'));
+  var paths=['/','' + location.pathname];
+  domains.forEach(function(d){paths.forEach(function(pa){
+    try{document.cookie='googtrans=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path='+(pa||'/')+(d?';domain='+d:'');}catch(e){}
+  });});
+}
+function xlLegacyRestore(){
+  xlBar('Restoring English…',null);
+  try{localStorage.removeItem(XL_LANGKEY);}catch(e){}
+  xlClearGoogTrans();
+  setTimeout(function(){location.reload();},120);
+}
 function xlLegacy(code){
   _gteInject();
   const probe=xlNodes(document.body)[0];
@@ -6663,7 +6692,10 @@ function xlMarkActive(){
 async function setTranslate(code){
   xlClosePopup();
   if(XL.busy)return;
-  if(!xlHasNative()){xlLegacy(code);XL.lang=code||'';xlMarkActive();return;}
+  if(!xlHasNative()){
+    if(!code){xlLegacyRestore();return;}          /* deterministic restore — see xlLegacyRestore */
+    xlLegacy(code);XL.lang=code;xlMarkActive();return;
+  }
   XL.busy=true;
   try{
     xlUnobserve();
