@@ -4,7 +4,7 @@
 // shell only when offline. Static assets/fonts/Firebase SDK stay cache-first for speed + offline.
 // Bump CACHE when deploying updates (keep it in lockstep with the on-screen version stamp).
 
-const CACHE='twisted-v1020';   // 1.1.0 (Polish release 2026-09-28); bump together with APP_VERSION in index.html
+const CACHE='twisted-v1021';   // 1.1.1 (banner framing fix 2026-09-28); bump together with APP_VERSION in index.html
 const FONT_CACHE='twisted-fonts-v1';
 const LIB_CACHE='twisted-libs-v1';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon-180.png','./icons/twisted-logo.png'];
@@ -97,7 +97,7 @@ self.addEventListener('fetch',e=>{
    - Precache bypasses the HTTP cache (cache:'reload'), so a changed file is never stored stale.
    - Keep the folder small: WebP/AVIF only, at most 400 KB a file, heroes about 1400px wide. */
 
-const ART_VERSION = 'art-9a07b13595';          // replaced by the build script
+const ART_VERSION = 'art-e962e9aa9b';          // replaced by the build script
 const ART_FILES = ["./art/chars/agatha.webp", "./art/chars/avatar_of_set.webp", "./art/chars/bill_psyches.webp", "./art/chars/blacksmith.webp", "./art/chars/carter.webp", "./art/chars/dodger.webp", "./art/chars/feygin.webp", "./art/chars/flower_seller.webp", "./art/chars/gamekeeper.webp", "./art/chars/gretel_and_hansel.webp", "./art/chars/guardian_dervish.webp", "./art/chars/guardian_hunter.webp", "./art/chars/hercule.webp", "./art/chars/highwaywoman.webp", "./art/chars/horace_de_havilland.webp", "./art/chars/hound_of_set.webp", "./art/chars/indigo_ford.webp", "./art/chars/lancer.webp", "./art/chars/launcelot.webp", "./art/chars/m_dusa.webp", "./art/chars/miner.webp", "./art/chars/nancy.webp", "./art/chars/nightingale.webp", "./art/chars/nouveau.webp", "./art/chars/ollyver.webp", "./art/chars/overseer_of_hounds.webp", "./art/chars/ratcatcha.webp", "./art/chars/rotten_mummy.webp", "./art/chars/sailor.webp", "./art/chars/scarab_mummy.webp", "./art/chars/shrike.webp", "./art/chars/sowerberry.webp", "./art/chars/teacher.webp", "./art/chars/tesla.webp", "./art/hero/abilities.webp", "./art/hero/alchemancy.webp", "./art/hero/campaign.webp", "./art/hero/canopic.webp", "./art/hero/characters.webp", "./art/hero/company.webp", "./art/hero/delights.webp", "./art/hero/dice.webp", "./art/hero/eye.webp", "./art/hero/features.webp", "./art/hero/home.webp", "./art/hero/lore.webp", "./art/hero/missions.webp", "./art/hero/rules.webp"];                   // e.g. ['./art/hero-rules.webp', './art/unit-sniper.webp']
 const ART_CACHE = 'pk-' + ART_VERSION;
 

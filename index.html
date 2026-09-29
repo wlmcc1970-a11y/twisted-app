@@ -1479,15 +1479,25 @@ header{
 /* ---------- Section banners: publisher art behind every section title ---------- */
 .section-header.tw-banner{
   position:relative;isolation:isolate;overflow:hidden;
-  min-height:clamp(200px,46vw,300px);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  min-height:clamp(250px,36vw,470px);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
   padding:1.2rem 1rem 1.35rem;margin:0 0 1.9rem;border:1px solid rgba(212,184,74,.34);border-radius:12px;
-  background-color:#141a14;background-image:var(--tw-art);background-size:cover;background-position:var(--tw-pos,center 38%);
+  background-color:#141a14;
   box-shadow:inset 0 1px 0 rgba(255,235,180,.10),0 2px 3px rgba(0,0,0,.5),0 14px 34px -14px rgba(0,0,0,.8);
 }
 .section-header.tw-banner::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(14,18,14,.04) 0%,rgba(14,18,14,.30) 30%,rgba(14,18,14,.90) 48%,rgba(14,18,14,.97) 60%,rgba(14,18,14,.98) 100%),
+  /* scrim sized to the title block (--tw-text, measured by tw-polish.js), so the art above it stays clear at every width */
+  background:linear-gradient(0deg,rgba(14,18,14,.98) 0,rgba(14,18,14,.95) calc(var(--tw-text,120px) + 10px),rgba(14,18,14,.55) calc(var(--tw-text,120px) + 38px),rgba(14,18,14,0) calc(var(--tw-text,120px) + 72px)),
              radial-gradient(120% 90% at 50% 10%,transparent 45%,rgba(0,0,0,.45) 100%)}
 .section-header.tw-banner::after{bottom:.55rem;background-color:transparent}
+/* the painting is shown whole at every width: fit to the banner height, centred, soft edges into the banner */
+.section-header.tw-banner>.tw-plate{position:absolute;top:0;left:50%;height:100%;aspect-ratio:1.6/1;transform:translateX(-50%);z-index:-2;pointer-events:none;
+  background:var(--tw-art) center/cover no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%)}
+/* phones: the plate spans the full width at its own 1.6:1 height, anchored at the top; the title sits over its lowest part only */
+@media (max-width:600px){
+  .section-header.tw-banner{min-height:calc(62.5vw + 30px)}
+  .section-header.tw-banner>.tw-plate{left:0;right:0;width:100%;height:auto;transform:none;-webkit-mask-image:none;mask-image:none}
+}
 .section-header.tw-banner .section-title{margin-bottom:.25rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.9)) drop-shadow(0 0 10px rgba(212,184,74,.25))}
 .section-header.tw-banner .section-subtitle{color:#efe0b0;text-shadow:0 1px 3px #000,0 0 10px rgba(0,0,0,.8);margin-bottom:.35rem}
 
@@ -1899,7 +1909,7 @@ const Store={
 };
 
 // ── APP VERSION (diagnostic) ─────────────────────────────
-const APP_VERSION='1.1.0';   // bump together with CACHE in sw.js (twisted-v1020 = 1.1.0)
+const APP_VERSION='1.1.1';   // bump together with CACHE in sw.js (twisted-v1021 = 1.1.1)
 
 // ── HTML ESCAPE HELPER (XSS guard for user-injected strings) ──
 function escapeHTML(s){
@@ -7391,7 +7401,6 @@ else document.addEventListener('DOMContentLoaded',xlRestore);
   var ART = {"Bill Psyches": "bill_psyches", "Nancy": "nancy", "Feygin": "feygin", "Dodger": "dodger", "Ollyver": "ollyver", "Sowerberry": "sowerberry", "Ratcatcha": "ratcatcha", "Shrike": "shrike", "Nouveau": "nouveau", "M'Dusa": "m_dusa", "Launcelot": "launcelot", "Nightingale": "nightingale", "Tesla": "tesla", "Gretel & Hansel": "gretel_and_hansel", "Blacksmith": "blacksmith", "Highwaywoman": "highwaywoman", "Lancer": "lancer", "Flower Seller": "flower_seller", "Teacher": "teacher", "Gamekeeper": "gamekeeper", "Sailor": "sailor", "Miner": "miner", "Carter": "carter", "Agatha": "agatha", "Hercule": "hercule", "Indigo Ford": "indigo_ford", "Horace De Havilland": "horace_de_havilland", "Avatar of Set": "avatar_of_set", "Guardian Dervish": "guardian_dervish", "Guardian Hunter": "guardian_hunter", "Hound of Set": "hound_of_set", "Overseer of Hounds": "overseer_of_hounds", "Rotten Mummy": "rotten_mummy", "Scarab Mummy": "scarab_mummy"};                 /* character name -> art/chars/<slug>.webp (publisher figure art) */
   var HERO = ['welcome','lore','rules','characters','abilities','alchemancy','canopic','eye','delights','features','company','missions','campaign','dice'];
   var HERO_FILE = {welcome:'home'};
-  var POS = {rules:'center 30%',characters:'center 25%',dice:'center 45%',abilities:'center 30%'};
   var ORDER = HERO.slice();
 
   PK.init({grain:true, offlineText:'Offline. Everything still works.', splashMaxMs:900,
@@ -7400,9 +7409,16 @@ else document.addEventListener('DOMContentLoaded',xlRestore);
   function banner(id){
     var p = document.getElementById('panel-'+id); if(!p) return;
     var h = p.querySelector('.section-header'); if(!h || h.classList.contains('tw-banner')) return;
-    h.style.setProperty('--tw-art', 'url("art/hero/'+(HERO_FILE[id]||id)+'.webp")');
-    if(POS[id]) h.style.setProperty('--tw-pos', POS[id]);
-    h.classList.add('tw-banner');
+    var plate = document.createElement('div'); plate.className = 'tw-plate'; plate.setAttribute('aria-hidden','true');
+    plate.style.setProperty('--tw-art', 'url("art/hero/'+(HERO_FILE[id]||id)+'.webp")');
+    h.insertBefore(plate, h.firstChild);
+    h.classList.add('tw-banner'); scrim(h);
+  }
+  /* the scrim covers exactly the title block: measured now and whenever the banner is resized */
+  function scrim(h){
+    var set = function(){ var t = h.querySelector('.section-title'); if(!t) return; var hb = h.getBoundingClientRect(), tb = t.getBoundingClientRect();
+      if(hb.height) h.style.setProperty('--tw-text', Math.max(60, Math.round(hb.bottom - tb.top)) + 'px'); };
+    set(); if(window.ResizeObserver) new ResizeObserver(set).observe(h);
   }
   function home(){
     var t = document.querySelector('#panel-welcome .welcome-title'); if(!t) return;
