@@ -1729,7 +1729,11 @@ main{padding-bottom:calc(5rem + env(safe-area-inset-bottom,0px))!important}
 
 /* Header at 320 to 349px: the wordmark steps down so TWISTED is never clipped beside the four 44px buttons */
 @media (max-width:379px){header{padding-left:max(.5rem,env(safe-area-inset-left));padding-right:max(.5rem,env(safe-area-inset-right))}}
-@media (max-width:349px){.logo-twisted{font-size:.76rem;letter-spacing:.01em}.header-actions{gap:.12rem}}
+@media (max-width:349px){
+  header{padding-left:max(.25rem,env(safe-area-inset-left));padding-right:max(.25rem,env(safe-area-inset-right))}
+  .header-top{gap:.1rem}.header-actions{gap:1px}
+  .logo-twisted{font-size:.94rem;letter-spacing:0}
+}
 
 /* Tablets (601 to 899px): the section nav is one scrolling row, as on desktop, so the full section names do not
    push the header to three rows */
@@ -1738,6 +1742,15 @@ main{padding-bottom:calc(5rem + env(safe-area-inset-bottom,0px))!important}
   #main-nav::-webkit-scrollbar{display:none}
   #main-nav .nav-btn{flex:none}
 }
+
+/* Header captions: 9px, the largest size at which "Language" still fits inside its 44px button */
+.header-icon-btn .hib-cap{font-size:9px;letter-spacing:-.01em}
+/* Desktop 1024px and wider: the section tabs wrap into centred rows so every full name is visible (no hidden tabs) */
+@media (min-width:1024px){
+  #main-nav{flex-wrap:wrap!important;overflow-x:visible;justify-content:center;row-gap:.35rem;-webkit-mask-image:none;mask-image:none}
+}
+/* First-run sync tip at the bottom: lift Back to top above it while it shows */
+body:has(#sync-tip) #back-top{bottom:calc(var(--tw-tip-h,96px) + 24px + env(safe-area-inset-bottom,0px))}
 
 /* Keyboard shortcut hint only where there is a keyboard */
 @media (hover:none),(pointer:coarse){.kbd-hint{display:none}}
@@ -1986,6 +1999,7 @@ document.getElementById('main-nav').addEventListener('click',e=>{
   const btn=e.target.closest('.nav-btn[data-panel]');
   if(!btn)return;
   const id=btn.dataset.panel;
+  _srArmed=false;   // a new section was chosen: Back no longer reopens old search results
   window.scrollTo(0,0);
   try{history.pushState({panel:id},'');}catch{}
   document.querySelectorAll('.panel').forEach(p=>{p.classList.remove('active','fade-in','slide-left','slide-right');});
@@ -2111,9 +2125,15 @@ try{history.replaceState({panel:'welcome'},'');}catch{}
 window.addEventListener('popstate',function(e){
   const id=(e.state&&e.state.panel)||'welcome';
   // pushHistory=false: this IS a back/forward navigation; do not push another entry
+  // Search (walkthrough 2026-10-03): the X closing reopened results eats its own history step; and while
+  // reopened results are showing, Back closes them first and leaves the page underneath alone
+  if(_srIgnorePop){_srIgnorePop=false;return;}
+  const so=document.getElementById('search-overlay');
+  if(_srPushed&&so&&so.style.display!=='none'){_srPushed=false;_srArmed=false;so.style.display='none';return;}
+  _srPushed=false;
   try{navTo(id,false);}catch{}
-  // Back from a search result: reopen the results for the same words (walkthrough 2026-10-03)
-  try{if(e.state&&e.state.search)srRestore(e.state.search);}catch{}
+  // Back from a search result: reopen the results for the same words, only while that search is still current
+  try{if(e.state&&e.state.search&&_srArmed)srRestore(e.state.search);}catch{}
 });
 
 // ── COLLAPSIBLE TUTORIAL SYSTEM ──────────────────────────
@@ -5758,6 +5778,7 @@ function getFooterHTML(){
 function toggleSearch(){
   const o=document.getElementById('search-overlay');
   const visible=o.style.display!=='none';
+  if(visible&&!_srNav)srForget();   // closed by the reader (X, backdrop, Escape): forget the saved results
   o.style.display=visible?'none':'block';
   if(!visible){
     const inp=document.getElementById('global-search');
@@ -5767,7 +5788,7 @@ function toggleSearch(){
 }
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    document.getElementById('search-overlay').style.display='none';
+    if(document.getElementById('search-overlay').style.display!=='none')toggleSearch();
     const cm=document.getElementById('combat-modal');
     if(cm&&cm.classList.contains('open'))closeCombatTracker();
   }
@@ -6175,10 +6196,18 @@ function globalSearch(q){
 // ── SEARCH: remember, restore and highlight (walkthrough 2026-10-03) ──
 // srMark stores the query on the current history entry, so Back from the page a result opened brings the
 // results back. A Character result opens a pop-up instead of a page, so it adds one entry of its own.
+var _srArmed=false,_srNav=false,_srPushed=false,_srIgnorePop=false;   // var: read by navTo, which can run before this line
+// forget saved results: Back will not reopen them, and a reopened-results history step is used up
+function srForget(){
+  _srArmed=false;
+  try{if(history.state&&history.state.search){const st=Object.assign({},history.state);delete st.search;history.replaceState(st,'');}}catch(e){}
+  if(_srPushed){_srPushed=false;_srIgnorePop=true;try{history.back();}catch(e){_srIgnorePop=false;}}
+}
 function srMark(isPopup){
   try{
     const q=(document.getElementById('global-search')||{}).value||'';
     if(q.trim().length<2)return;
+    _srArmed=true;_srPushed=false;_srNav=true;setTimeout(()=>{_srNav=false;},0);
     const cur=(document.querySelector('.panel.active')||{}).id;
     const panel=cur?cur.replace('panel-',''):'welcome';
     history.replaceState(Object.assign({},history.state||{},{panel:(history.state&&history.state.panel)||panel,search:q}),'');
@@ -6195,6 +6224,8 @@ function srRestore(q){
   inp.value=q;
   globalSearch(q);
   const r=document.getElementById('search-results');if(r)r.scrollTop=0;
+  // one history step for the reopened results, so the next Back closes them instead of moving the page
+  try{if(!(history.state&&history.state.srOverlay))history.pushState({panel:(history.state&&history.state.panel)||'welcome',srOverlay:1},'');_srPushed=true;}catch(e){}
 }
 // wraps each matched word in the result titles and previews with <mark>; text nodes only, so markup stays intact
 function srHighlight(root,q){
@@ -6896,6 +6927,7 @@ function pwaInstall(){
 
 function navTo(id,pushHistory){
   window.scrollTo(0,0);
+  if(pushHistory!==false&&!_srNav)_srArmed=false;   // a new section was chosen: Back no longer reopens old results
   if(pushHistory!==false){
     try{history.pushState({panel:id},'');}catch{}
   }
@@ -7403,7 +7435,7 @@ else document.addEventListener('DOMContentLoaded',xlRestore);
 
   // Header icon + first-run tip make sync discoverable upfront (independent of Firebase load).
   window.openSync=function(){try{var m=document.getElementById('mobile-menu');if(m&&!m.classList.contains('open'))toggleMobileMenu();var s=document.getElementById('sync-section');if(s&&s.scrollIntoView)s.scrollIntoView({block:'nearest'});}catch(e){}};
-  function showSyncTip(){try{if(localStorage.getItem('twisted_sync_tip_seen'))return;var bar=document.createElement('div');bar.id='sync-tip';bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99998;max-width:92%;width:420px;display:flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#241a0e,#1a140a);border:1px solid var(--brass,#d4b84a);border-radius:10px;padding:.6rem .7rem;box-shadow:0 8px 28px rgba(0,0,0,.45);font-family:\'Josefin Sans\',sans-serif;';bar.innerHTML='<span style="flex:1;font-size:.78rem;line-height:1.35;color:#e8d8a0;">New: sign in to <b>sync your saved selections across devices</b>. Optional, anytime.</span>';var go=document.createElement('button');go.textContent='Set up';go.style.cssText='flex:none;min-height:36px;padding:.35rem .7rem;font-family:inherit;font-size:.78rem;font-weight:600;color:#1a140a;background:var(--brass,#d4b84a);border:none;border-radius:7px;cursor:pointer;';var x=document.createElement('button');x.setAttribute('aria-label','Dismiss');x.textContent='\u2715';x.style.cssText='flex:none;min-width:36px;min-height:36px;background:transparent;border:none;color:#9a8f7a;font-size:1rem;cursor:pointer;';function dismiss(){try{localStorage.setItem('twisted_sync_tip_seen','1');}catch(e){}if(bar.parentNode)bar.parentNode.removeChild(bar);}go.onclick=function(){dismiss();window.openSync();};x.onclick=dismiss;bar.appendChild(go);bar.appendChild(x);document.body.appendChild(bar);}catch(e){}}
+  function showSyncTip(){try{if(localStorage.getItem('twisted_sync_tip_seen'))return;var bar=document.createElement('div');bar.id='sync-tip';bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99998;max-width:92%;width:420px;display:flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#241a0e,#1a140a);border:1px solid var(--brass,#d4b84a);border-radius:10px;padding:.6rem .7rem;box-shadow:0 8px 28px rgba(0,0,0,.45);font-family:\'Josefin Sans\',sans-serif;';bar.innerHTML='<span style="flex:1;font-size:.78rem;line-height:1.35;color:#e8d8a0;">New: sign in to <b>sync your saved selections across devices</b>. Optional, anytime.</span>';var go=document.createElement('button');go.textContent='Set up';go.style.cssText='flex:none;min-height:36px;padding:.35rem .7rem;font-family:inherit;font-size:.78rem;font-weight:600;color:#1a140a;background:var(--brass,#d4b84a);border:none;border-radius:7px;cursor:pointer;';var x=document.createElement('button');x.setAttribute('aria-label','Dismiss');x.textContent='\u2715';x.style.cssText='flex:none;min-width:36px;min-height:36px;background:transparent;border:none;color:#9a8f7a;font-size:1rem;cursor:pointer;';function dismiss(){try{localStorage.setItem('twisted_sync_tip_seen','1');}catch(e){}if(bar.parentNode)bar.parentNode.removeChild(bar);}go.onclick=function(){dismiss();window.openSync();};x.onclick=dismiss;bar.appendChild(go);bar.appendChild(x);document.body.appendChild(bar);try{document.body.style.setProperty('--tw-tip-h',bar.offsetHeight+'px');}catch(e){}}catch(e){}}
   if(document.readyState!=='loading')showSyncTip();else document.addEventListener('DOMContentLoaded',showSyncTip);
   Promise.all([import(FB+"firebase-app.js"),import(FB+"firebase-auth.js"),import(FB+"firebase-firestore.js")]).then(function(mods){
     var appMod=mods[0],authMod=mods[1],fsMod=mods[2];
