@@ -1635,6 +1635,128 @@ body{background-color:var(--iron-dark)}
 @media (max-width:600px){.ess-row{flex-wrap:wrap;row-gap:.2rem}.ess-row .ess-lbl{flex:1}.ess-row .ess-pips{order:3;flex:0 0 100%;justify-content:flex-start;padding-left:7px}}
 
 </style>
+<style id="tw-walkthrough-fixes">
+/* Walkthrough fixes, round 2 (1.1.2, 2026-10-03). DigiRune Studios. Layout and wording only: no rules text, data,
+   sign-in, sync, translate or storage behaviour changes. */
+
+/* Lining figures in the IM Fell body face. IM Fell English ships only old-style digits (no lnum feature), so "180"
+   read like "18o". These two 2 KB faces supply ONLY the digits 0-9 (EB Garamond lining figures, SIL OFL, see
+   fonts/OFL.txt), scaled to Fell's cap height with Fell's own line metrics so line heights do not move. They are
+   declared after the Google Fonts sheet, so for 0-9 they win; every other character still comes from IM Fell. */
+@font-face{font-family:'IM Fell English';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/tw-lining-digits.woff2) format('woff2');unicode-range:U+0030-0039}
+@font-face{font-family:'IM Fell English';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/tw-lining-digits-italic.woff2) format('woff2');unicode-range:U+0030-0039}
+body{font-variant-numeric:lining-nums}
+
+/* Line breaks: no lone last word in headings and captions; body copy avoids orphans where the browser can */
+@supports (text-wrap-style:pretty){body{text-wrap-style:pretty}}
+@supports not (text-wrap-style:pretty){body{text-wrap:pretty}}
+@supports (text-wrap-style:balance){.section-title,.section-subtitle,.welcome-tagline,.wc-title,.wc-desc,.modal-section-title,.card-title,.cse-head,.cse-sub,#toast,.tw-home-books,.dmg-lbl,.faction-tab,.m-title,.m-desc,.sc-theme,.act-title{text-wrap-style:balance}}
+@supports not (text-wrap-style:balance){.section-title,.section-subtitle,.welcome-tagline,.wc-title,.wc-desc,.modal-section-title,.card-title,.cse-head,.cse-sub,#toast,.tw-home-books,.dmg-lbl,.faction-tab,.m-title,.m-desc,.sc-theme,.act-title{text-wrap:balance}}
+/* toasts may wrap on narrow phones instead of running off the screen */
+#toast{white-space:normal;width:max-content;max-width:min(92vw,420px);text-align:center;line-height:1.4}
+.nw{white-space:nowrap}
+.section-header .section-subtitle{line-height:1.5}
+.tw-home-tag .tag-sep{display:inline}
+@media (max-width:600px){.tw-home-tag .tag-part{display:block}.tw-home-tag .tag-sep{display:none}.tw-home-books{line-height:2}}
+
+/* phones: long section titles step down in size so they break into two even lines */
+@media (max-width:600px){.section-header .section-title{font-size:clamp(1.2rem,6.2vw,1.7rem)}.section-header .section-title.st-fit{font-size:clamp(1rem,5.1vw,1.7rem)}}
+/* Campaign: one mission per row on phones (three columns left about eight words per line) */
+@media (max-width:600px){.camp-missions{grid-template-columns:1fr!important}.camp-act.open .camp-missions{max-height:6000px}}
+
+/* Delights on phones: the name gets its own line under the points and roll, so two-word names never break */
+@media (max-width:480px){
+  #delight-results .card>div:first-child{flex-wrap:wrap;row-gap:.2rem}
+  #delight-results .card>div:first-child>strong{order:3;flex:1 1 100%!important}
+  #delight-results .card>div:first-child>button{margin-left:auto}
+}
+/* Ability and invocation rows on phones: a name that will not fit beside its tag keeps its line and the tag moves
+   under it, instead of the name breaking word by word */
+@media (max-width:480px){
+  #panel-abilities .glo-head,.invoc-head{flex-wrap:wrap;row-gap:.3rem}
+  #panel-abilities .glo-head>.glo-name,.invoc-head>.invoc-name{flex:0 0 auto;max-width:100%}
+}
+/* Character pop-up portrait caption on phones: role, then faction on its own line */
+@media (max-width:400px){.mh-sep{display:none}.mh-fac{display:block;margin-top:.15rem}.mh-role,.mh-fac{line-height:1.3}}
+
+/* Canopic spirit details: short label and value blocks break into even lines */
+@supports (text-wrap-style:balance){.spirit-expand div,#spirit-detail div{text-wrap-style:balance}}
+
+/* Section banners: half the old height on inner pages, so the page content starts on the first screen */
+.section-header.tw-banner{min-height:clamp(180px,18vw,260px)}
+@media (max-width:600px){
+  .section-header.tw-banner{min-height:calc(34vw + 64px)}
+  .section-header.tw-banner>.tw-plate{top:0;bottom:0;left:0;right:0;width:100%;height:100%;aspect-ratio:auto;background-position:center 28%}
+}
+
+/* Character pop-up: an opaque title bar, so body text never shows through it while scrolling */
+.modal-head{background:linear-gradient(135deg,#2c2414,#1e1c1d);-webkit-backdrop-filter:none;backdrop-filter:none;z-index:3;box-shadow:0 8px 14px -10px rgba(0,0,0,.9)}
+/* Pop-up stats: the same order as the card, laid out with no empty cells: two rows of five where the pop-up is
+   wide enough, otherwise rows of four with the last row's cells widened to fill it */
+.modal-body{container-type:inline-size}
+.modal-stats.ms-n10,.modal-stats.ms-n9{grid-template-columns:repeat(5,1fr)}
+.modal-stats.ms-n8,.modal-stats.ms-n7{grid-template-columns:repeat(4,1fr)}
+.modal-stats.ms-n9>.ms:last-child,.modal-stats.ms-n7>.ms:last-child{grid-column:span 2}
+.modal-stats .ms-lbl{white-space:nowrap}
+@container (max-width:379px){
+  .modal-stats[class*=ms-n]{gap:.45rem}
+  .modal-stats[class*=ms-n] .ms{padding-left:.15rem;padding-right:.15rem}
+  .modal-stats.ms-n10,.modal-stats.ms-n9{grid-template-columns:repeat(4,1fr)}
+  .modal-stats.ms-n10>.ms:nth-last-child(-n+2){grid-column:span 2}
+  .modal-stats.ms-n9>.ms:last-child{grid-column:span 4}
+}
+@container (max-width:249px){
+  .modal-stats[class*=ms-n]{grid-template-columns:repeat(3,1fr)}
+  .modal-stats.ms-n10>.ms:nth-last-child(-n+2),.modal-stats.ms-n9>.ms:last-child,.modal-stats.ms-n7>.ms:last-child{grid-column:auto}
+  .modal-stats.ms-n10>.ms:nth-last-child(1),.modal-stats.ms-n7>.ms:nth-last-child(1){grid-column:span 3}
+  .modal-stats.ms-n8>.ms:nth-last-child(1){grid-column:span 2}
+}
+/* ability rows read as tappable: a chevron that turns when the rule opens (the row stays 44px tall) */
+.ability-entry .ability-ename{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.ability-entry .ability-ename::after{content:"";flex:none;width:.42rem;height:.42rem;margin-right:.3rem;border-right:2px solid var(--brass);border-bottom:2px solid var(--brass);transform:rotate(-45deg);transition:transform .2s ease}
+.ability-entry.expanded .ability-ename::after{transform:rotate(45deg) translate(-2px,-2px)}
+
+/* Game Mode menu: anchored to its button's right edge so it never runs off screen, and taken out of layout when
+   closed (the hidden menu used to make the page about 14px wider than the phone) */
+.gm-dropdown{display:none;right:0;left:auto;transform:none;min-width:0;width:max-content;max-width:calc(100vw - 1.5rem)}
+.gm-dropdown.open{display:flex}
+.gm-option{white-space:normal}
+
+/* Back to top: kept clear of form fields, and the page ends with room for it */
+main{padding-bottom:calc(5rem + env(safe-area-inset-bottom,0px))!important}
+#back-top{transition:opacity .2s ease}
+#back-top.bt-hide{opacity:0;pointer-events:none}
+
+/* Header at 320 to 349px: the wordmark steps down so TWISTED is never clipped beside the four 44px buttons */
+@media (max-width:379px){header{padding-left:max(.5rem,env(safe-area-inset-left));padding-right:max(.5rem,env(safe-area-inset-right))}}
+@media (max-width:349px){.logo-twisted{font-size:.76rem;letter-spacing:.01em}.header-actions{gap:.12rem}}
+
+/* Tablets (601 to 899px): the section nav is one scrolling row, as on desktop, so the full section names do not
+   push the header to three rows */
+@media (min-width:601px) and (max-width:899px){
+  #main-nav{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
+  #main-nav::-webkit-scrollbar{display:none}
+  #main-nav .nav-btn{flex:none}
+}
+
+/* Keyboard shortcut hint only where there is a keyboard */
+@media (hover:none),(pointer:coarse){.kbd-hint{display:none}}
+
+/* Damage Calculator: one label style on one line, so the three labels and the three controls each share a line */
+.dmg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;align-items:end;margin-bottom:.9rem}
+.dmg-grid>div{display:flex;flex-direction:column;min-width:0}
+.dmg-lbl{font-family:'Josefin Sans',sans-serif;font-size:.72rem;line-height:1.2;color:var(--brass);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.32rem;white-space:nowrap}
+.dmg-grid select,.dmg-grid input{height:46px;min-height:46px!important;box-sizing:border-box;margin:0}
+/* "Result" sits on the centre line; the hidden archive sigil beside it no longer pushes it left */
+.dl-txt{position:relative;display:inline-block;margin-right:-.2em}
+
+/* Game-icons in running UI text, replacing system emoji */
+.gi-inl{width:1.05em;height:1.05em;vertical-align:-.16em;fill:currentColor;flex:none}
+.modal-section-title .gi-inl{margin-right:.35em}
+
+/* Search: highlight the words that matched */
+#search-results mark.sr-hit{background:rgba(212,184,74,.3);color:inherit;border-radius:2px;padding:0 .05em}
+</style>
 </head>
 <body>
 <!-- Game-icons.net SVG sprite (CC BY 3.0) — used everywhere via <use href="#gi-..."/> -->
@@ -1728,6 +1850,9 @@ body{background-color:var(--iron-dark)}
 <symbol id="gi-death-skull" viewBox="0 0 512 512"><path fill="currentColor" d="M220.09 25.297c-34.308 4.9-67.18 17.336-94.668 37.256l69.03 139.824-109.487-99.363c-28.304 39.302-42.5 93.27-31.61 163.675l15.22 94.37 70.474-13.275 3.458 18.365-15.444 2.91 44.65 127.653H197.2l-7.827-62.03 18.533-2.34 8.123 64.37h29.72V431.22h18.688v65.493h29.724l8.12-64.37 18.536 2.34-7.828 62.03h25.578l44.465-127.135-18.195-3.428 3.46-18.365 70.362 13.252 18.28-94.455c10.763-69.744-3.717-123.52-32.372-162.865l-108.713 98.66L384.36 63.613c-27.52-20.056-60.386-32.763-94.653-37.982l-34.52 164.485L220.09 25.297zm-92.182 192.266c4.232.063 8.63.81 13.186 2.208-7.603 6.918-12.375 16.89-12.375 27.978 0 20.887 16.93 37.816 37.813 37.816 15.928 0 29.548-9.85 35.12-23.793l29.136 22.365-81.8 26.383-.226.062c-15.9 4.26-30.327.71-40.15-7.498-9.82-8.21-15.218-20.12-17.12-32.207-1.902-12.086-.44-24.64 5.342-35.068 5.78-10.43 17.11-18.454 31.072-18.244zm216.53 16.656a37.675 37.675 0 0 0-2.502 13.528c0 20.887 16.93 37.816 37.814 37.816s37.814-16.93 37.814-37.816c0-.565-.018-1.125-.043-1.684 2.2 7.927 2.488 16.48 1.177 24.81-1.902 12.087-7.3 24-17.12 32.208-9.823 8.21-24.248 11.76-40.15 7.498l-.226-.062-81.8-26.383 65.038-49.916zm-89.21 57.173 40.026 101.834-17.07 7.064-22.957-35.558-22.957 35.56-17.66-7.065 40.617-101.834z"/></symbol>
 <symbol id="gi-spanner" viewBox="0 0 512 512"><path fill="currentColor" d="M331.188 16.72c-40.712-.002-81.41 15.408-112.438 46.436-43.866 43.864-56.798 107-38.813 162.25L17.03 388.312v25.75l170.22-170.218c2.75 5.84 5.847 11.555 9.344 17.094L17.03 440.5v51.78H64l181.875-181.874a158.498 158.498 0 0 0 17.03 9.438L90.44 492.28h27.03l164.75-164.75c55.182 17.85 118.21 4.884 162-38.905 41.415-41.414 54.998-99.91 41.282-152.813L380.22 241.125l-90.033-23.938-23.968-90.03L371.53 21.843a161.459 161.459 0 0 0-40.342-5.125z"/></symbol>
 <symbol id="gi-quill-ink" viewBox="0 0 512 512"><path fill="currentColor" d="M496.938 14.063c-95.14 3.496-172.297 24.08-231.282 55.812l-29.47 49.28-4.967-28.093c-10.535 7.402-20.314 15.222-29.314 23.407l-14.687 45.06-5.032-25.155c-40.65 45.507-60.41 99.864-58.938 155.906 47.273-93.667 132.404-172.727 211.97-221.155l9.717 15.97c-75.312 45.838-156.387 121.202-202.187 208.25h12.156c19.78-12.02 39.16-26.858 58.406-43.44l-30.28 1.595 54.218-23.094c46.875-43.637 93.465-94.974 143.313-138.28l-24.47-5.19 56.5-21.03c26.853-20.485 54.8-37.844 84.344-49.843zM59.53 312.03v30.408H194V312.03H59.53zm20.376 49.095L47.25 389.813 24.97 474.78l14.53 15.876h177.22l14.56-15.875L209 389.814l-30.906-28.688H79.906z"/></symbol>
+<!-- walkthrough 2026-10-03: game-icons.net by Lorc (CC BY 3.0) -->
+<symbol id="gi-hazard-sign" viewBox="0 0 512 512"><path fill="currentColor" d="M254.97 34.75c-30.48-.167-59.02 22.12-79.532 62.156-.075.146-.176.26-.25.406L43.063 326.783l-.22.343C18.5 365.413 13.377 401.515 28.47 428.03c15.08 26.498 48.627 40.126 93.5 37.908H387.063c44.887 2.227 78.445-11.404 93.53-37.907 15.09-26.51 9.956-62.595-14.375-100.874l-.22-.375L335.28 98.064c-.06-.12-.124-.225-.186-.344-20.948-40.263-49.626-62.803-80.125-62.97zm.06 18.844c13.576.13 26.453 6.93 38.126 18.343 11.606 11.347 22.554 27.453 33.406 48.344.063.122.125.224.188.345l115.22 201.563c.033.053.058.102.092.156l.125.22c12.92 20.274 21.395 38.06 25.282 53.967 3.91 16.01 3.063 30.648-3.845 42.408-6.908 11.76-19.222 19.533-34.78 23.906-15.444 4.34-34.508 5.656-57.408 4.5H137.625c-24.845 1.258-44.73-.32-60.405-5.125-15.78-4.84-27.68-13.45-33.72-25.69-6.04-12.237-5.862-26.797-1.5-42.436 4.333-15.535 12.815-32.608 24.875-51.53l.22-.377L183.562 120c.08-.157.17-.28.25-.438C194.51 98.644 205.32 82.6 216.875 71.376c11.642-11.307 24.58-17.913 38.156-17.78zm47.657 62.093l-28.53 224.032h-41.844L204.438 120.5c-1.404 2.556-2.81 5.205-4.22 7.97l-.093.218-.125.218-116.938 202.97-.093.187-.126.187C71.28 350.346 63.598 366.226 60 379.125c-3.598 12.9-3.108 22.322.25 29.125 3.358 6.803 9.925 12.28 22.47 16.125 12.542 3.845 30.67 5.547 54.405 4.313l.25-.032h234.313l.25.03c21.85 1.138 39.308-.28 51.875-3.81 12.566-3.533 19.822-8.827 23.687-15.407 3.865-6.58 4.978-15.545 1.813-28.5-3.166-12.958-10.732-29.374-23.094-48.72l-.126-.188-.125-.218-115.658-202.28-.093-.158-.064-.187c-2.5-4.828-4.99-9.326-7.47-13.532zM231.28 361.875h43.907v43.906H231.28v-43.905z"/></symbol>
+<symbol id="gi-bullets" viewBox="0 0 512 512"><path fill="currentColor" d="M162.322 17.943l-28.316 105.682 18.053 4.838 4.194-15.654 169.764 45.487 11.28-42.088-169.872-45.105 4.838-18.052 169.87 45.103 4.038-15.066L176.404 37.6l3.97-14.82-18.052-4.837zM361.336 98.7l-14.453 53.943c53.99 13.97 102.986 20.59 150.95 10.964-37.1-32.648-82.453-50.034-136.497-64.906zM128.676 145l-41.82 101.104 17.27 7.142 6.216-15.023L272.75 305.4l16.36-39.556-162.43-67.12 7.142-17.27 162.432 67.118 6.254-15.12-162.406-67.18 5.843-14.13-17.27-7.142zm186.818 105.95l-21.344 51.605c51.717 20.872 99.435 33.81 148.24 30.502-32.538-37.196-75.244-60.332-126.896-82.106zM77.107 266.067l-54.705 94.752 16.186 9.346 8.133-14.086 152.23 87.893 20.472-35.452L66.988 320.97l9.344-16.183 152.434 87.545 9.117-15.79L85.65 288.647l7.643-13.238-16.186-9.344zM248.46 395.594l-27.92 48.363c48.526 27.46 94.13 46.532 142.942 49.647-27.38-41.132-66.678-69.662-115.02-98.01z"/></symbol>
 </svg>
 <!-- SPLASH SCREEN -->
 <div id="splash-screen" style="position:fixed;inset:0;z-index:9999;background:#1F2620;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease">
@@ -1759,8 +1884,8 @@ body{background-color:var(--iron-dark)}
           <button class="header-icon-btn gm-btn gm-off" id="game-mode-btn" onclick="toggleGmDropdown()" title="Game Mode OFF" aria-label="Game Mode"><svg class="gi" aria-hidden="true"><use href="#gi-gamemode"/></svg><span class="hib-cap" translate="no" aria-hidden="true">Game</span></button>
           <div class="gm-dropdown" id="gm-dropdown">
             <div class="gm-dropdown-title"><svg class="gi" aria-hidden="true"><use href="#gi-gamemode"/></svg> Game Mode</div>
-            <button class="gm-option" data-mode="off" onclick="setGameMode(false)"><span class="gm-opt-icon">○</span> OFF: Show All Tabs</button>
-            <button class="gm-option" data-mode="on" onclick="setGameMode(true)"><span class="gm-opt-icon">○</span> ON: Show Limited Tabs</button>
+            <button class="gm-option" data-mode="off" onclick="setGameMode(false)"><span class="gm-opt-icon">○</span> Off: every section in the menu</button>
+            <button class="gm-option" data-mode="on" onclick="setGameMode(true)"><span class="gm-opt-icon">○</span> On: menu without Lore, Campaign and Shop</button>
           </div>
         </div>
         <button id="translate-btn" translate="no" onclick="toggleTranslatePopup()" title="Translate" aria-label="Translate" class="header-icon-btn"><svg class="gi" aria-hidden="true"><use href="#gi-translate"/></svg><span class="hib-cap" translate="no" aria-hidden="true">Language</span></button>
@@ -1774,14 +1899,14 @@ body{background-color:var(--iron-dark)}
       <button translate="no" class="nav-btn" data-panel="characters" data-icon="characters" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-characters"/></svg> Characters</button>
       <button translate="no" class="nav-btn" data-panel="abilities" data-icon="abilities" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-abilities"/></svg> Abilities</button>
       <button class="nav-btn" translate="no" data-panel="alchemancy" data-icon="alchemancy" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-alchemancy"/></svg> Alchemancy</button>
-      <button class="nav-btn" translate="no" data-panel="canopic" data-icon="canopic" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-canopic"/></svg> Canopic</button>
-      <button class="nav-btn" translate="no" data-panel="eye" data-icon="eye" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-eye"/></svg> Eye</button>
+      <button class="nav-btn" translate="no" data-panel="canopic" data-icon="canopic" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-canopic"/></svg> Canopic Jars</button>
+      <button class="nav-btn" translate="no" data-panel="eye" data-icon="eye" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-eye"/></svg> Eye of The Engine</button>
       <button class="nav-btn" translate="no" data-panel="delights" data-icon="delights" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-delights"/></svg> Delights</button>
       <button translate="no" class="nav-btn" data-panel="features" data-icon="features" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-features"/></svg> Features</button>
-      <button class="nav-btn" translate="no" data-panel="company" data-icon="company" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-company"/></svg> Company</button>
+      <button class="nav-btn" translate="no" data-panel="company" data-icon="company" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-company"/></svg> My Company</button>
       <button translate="no" class="nav-btn" data-panel="missions" data-icon="missions" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-missions"/></svg> Missions</button>
       <button translate="no" class="nav-btn game-hidden" data-panel="campaign" data-icon="campaign" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-campaign"/></svg> Campaign</button>
-      <button translate="no" class="nav-btn" data-panel="dice" data-icon="dice" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-dice"/></svg> Dice</button>
+      <button translate="no" class="nav-btn" data-panel="dice" data-icon="dice" role="tab"><svg class="gi" aria-hidden="true"><use href="#gi-dice"/></svg> Dice Roller</button>
       <a href="https://dementedgamesstore.myshopify.com/" target="_blank" rel="noopener" class="nav-btn game-hidden" data-icon="shop" style="text-decoration:none;color:inherit" translate="no"><svg class="gi" aria-hidden="true"><use href="#gi-shop"/></svg> Shop Twisted</a>
     </nav>
   </div>
@@ -1913,7 +2038,26 @@ function mobileNavTo(id){
 // BACK TO TOP
 window.addEventListener('scroll',()=>{
   document.getElementById('back-top').classList.toggle('visible',window.scrollY>400);
+  btCheckSoon();
 });
+// Keep the button off form fields (walkthrough 2026-10-03): it fades out while it would cover an input,
+// select, label or button, or while the keyboard is up, and comes back as soon as the spot is clear.
+let _btPend=false;
+function btCheckSoon(){if(_btPend)return;_btPend=true;requestAnimationFrame(()=>{_btPend=false;btCheck();});}
+function btCheck(){
+  const b=document.getElementById('back-top');if(!b||!b.classList.contains('visible'))return;
+  const a=document.activeElement;
+  let hide=!!(a&&a!==document.body&&a.matches&&a.matches('main input,main select,main textarea'));
+  if(!hide){
+    const r=b.getBoundingClientRect(),pad=6;
+    const pts=[[r.left+r.width/2,r.top+r.height/2],[r.left-pad,r.top-pad],[r.right+pad,r.top-pad],[r.left-pad,r.bottom+pad],[r.right+pad,r.bottom+pad],[r.left-pad,r.top+r.height/2]];
+    hide=pts.some(([x,y])=>(document.elementsFromPoint(x,y)||[]).some(el=>el!==b&&el.closest&&el.closest('main')&&el.closest('input,select,textarea,label,button,.d-btn')));
+  }
+  b.classList.toggle('bt-hide',hide);
+}
+document.addEventListener('focusin',btCheckSoon);
+document.addEventListener('focusout',()=>setTimeout(btCheckSoon,50));
+window.addEventListener('resize',btCheckSoon);
 
 // TOAST
 function showToast(msg,dur=2200){
@@ -1968,6 +2112,8 @@ window.addEventListener('popstate',function(e){
   const id=(e.state&&e.state.panel)||'welcome';
   // pushHistory=false: this IS a back/forward navigation; do not push another entry
   try{navTo(id,false);}catch{}
+  // Back from a search result: reopen the results for the same words (walkthrough 2026-10-03)
+  try{if(e.state&&e.state.search)srRestore(e.state.search);}catch{}
 });
 
 // ── COLLAPSIBLE TUTORIAL SYSTEM ──────────────────────────
@@ -2098,7 +2244,8 @@ function toggleTranslatePopup(){
   var dd=document.getElementById('gm-dropdown');
   if(dd)dd.classList.remove('open');
 }
-function setGameMode(active){
+function setGameMode(active,quiet){
+  const was=document.body.classList.contains('game-mode');
   if(active){document.body.classList.add('game-mode');}else{document.body.classList.remove('game-mode');}
   const btn=document.getElementById('game-mode-btn');
   if(btn){
@@ -2121,6 +2268,8 @@ function setGameMode(active){
   // close dropdown
   var dd=document.getElementById('gm-dropdown');
   if(dd)dd.classList.remove('open');
+  // say what changed (walkthrough 2026-10-03)
+  if(!quiet)showToast(active?(was?'Game Mode is on':'Game Mode on: Lore, Campaign and Shop are off the menu'):(was?'Game Mode off: every section is back in the menu':'Game Mode is off'),2600);
 }
 // close dropdowns when clicking outside
 document.addEventListener('click',function(e){
@@ -2137,7 +2286,7 @@ document.addEventListener('click',function(e){
 });
 (function(){
   if(Store.get('game_mode',false)){
-    setGameMode(true);
+    setGameMode(true,true);
   } else {
     // init default OFF state
     document.querySelectorAll('.gm-option[data-mode="off"]').forEach(o=>{o.classList.add('active');o.querySelector('.gm-opt-icon').textContent='●';});
@@ -2238,7 +2387,7 @@ function eeSigilHTML(key,inlineStyle){
   document.getElementById('panel-welcome').innerHTML=`
 <div style="text-align:center;padding:2.5rem 0">
   <h1 class="welcome-title" aria-label="TWISTED" translate="no"></h1>
-  <p class="welcome-tagline">Steampunk Skirmish · The Official Companion App</p>
+  <p class="welcome-tagline tw-home-tag"><span class="tag-part">Steampunk Skirmish</span><span class="tag-sep"> · </span><span class="tag-part">The Official Companion App</span></p>
   <div class="welcome-divider"></div>
   <p style="font-size:.95rem;color:var(--parchment-dark);max-width:580px;margin:0 auto 2.2rem;line-height:1.88">
     The official companion for <em translate="no">Twisted</em> by <span translate="no">Demented Games</span>. All three books in one place: <span translate="no">Core Rules v1.7</span>, <span translate="no">Scions of the Sands</span>, and <span translate="no">The Watchers</span>.
@@ -2246,12 +2395,12 @@ function eeSigilHTML(key,inlineStyle){
   <div class="welcome-grid">
     ${[
       {icon:'📖',title:'Lore',desc:'World & factions',panel:'lore'},
-      {icon:'📜',title:'Rules',desc:'Full mechanics reference',panel:'rules'},
+      {icon:'📜',title:'Rules',desc:'Full mechanics\u00a0reference',panel:'rules'},
       {icon:'👥',title:'Characters',desc:'All rosters & stats',panel:'characters'},
       {icon:'⚡',title:'Abilities',desc:'Complete glossary',panel:'abilities'},
       {icon:'🔮',title:'Alchemancy',desc:'40 invocations, 4 schools',panel:'alchemancy'},
       {icon:'🏺',title:'Canopic Jars',desc:'Spirit deck & tracker',panel:'canopic'},
-      {icon:'👁️',title:'Eye of Engine',desc:'Virtual card deck',panel:'eye'},
+      {icon:'👁️',title:'Eye of The Engine',desc:'Virtual card deck',panel:'eye'},
       {icon:'💎',title:'Delights',desc:'80 items, 4 tiers',panel:'delights'},
       {icon:'🌿',title:'Features',desc:'20 terrain effects',panel:'features'},
       {icon:'📋',title:'My Company',desc:'Build your roster',panel:'company'},
@@ -2274,13 +2423,13 @@ function eeSigilHTML(key,inlineStyle){
       <div class="wc-desc" translate="no">Demented Games store</div>
     </a>
   </div>
-  <p style="font-family:'Josefin Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;color:var(--brass)" translate="no">RULES v1.7 · SCIONS OF THE SANDS · THE WATCHERS${eeSigilHTML('engine','vertical-align:middle;margin-left:.5rem;')}</p>
+  <p style="font-family:'Josefin Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;color:var(--brass)" class="tw-home-books tw-home-tag" translate="no"><span class="nw tag-part">RULES v1.7</span><span class="tag-sep"> · </span><span class="nw tag-part">SCIONS OF THE SANDS</span><span class="tag-sep"> · </span><span class="nw tag-part"><span style="position:relative">THE WATCHERS${eeSigilHTML('engine','position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.25rem;')}</span></span></p>
   <div class="welcome-quote" onclick="refreshWelcomeQuote(this)" title="Tap for another quote">
     <span class="wq-text">${q.q}</span>
     <span class="wq-attr">${q.attr}</span>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;align-items:center;margin-top:1.5rem">
-    <button onclick="toggleSearch()" style="background:linear-gradient(135deg,rgba(212,184,74,.1),rgba(168,106,40,.08));border:1px solid rgba(212,184,74,.35);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.1em;padding:.6rem 1.35rem;border-radius:6px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem" onmouseover="this.style.borderColor='var(--brass)'" onmouseout="this.style.borderColor='rgba(212,184,74,.35)'"><svg class="welcome-cta-icon" aria-hidden="true"><use href="#gi-search"/></svg> Search Everything <kbd style="background:rgba(212,184,74,.1);border:1px solid rgba(212,184,74,.2);border-radius:3px;padding:.05rem .4rem;font-size:.68rem;font-family:monospace">⌘K</kbd></button>
+    <button onclick="toggleSearch()" style="background:linear-gradient(135deg,rgba(212,184,74,.1),rgba(168,106,40,.08));border:1px solid rgba(212,184,74,.35);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.1em;padding:.6rem 1.35rem;border-radius:6px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem" onmouseover="this.style.borderColor='var(--brass)'" onmouseout="this.style.borderColor='rgba(212,184,74,.35)'"><svg class="welcome-cta-icon" aria-hidden="true"><use href="#gi-search"/></svg> Search Everything <kbd class="kbd-hint" style="background:rgba(212,184,74,.1);border:1px solid rgba(212,184,74,.2);border-radius:3px;padding:.05rem .4rem;font-size:.68rem;font-family:monospace">⌘K</kbd></button>
     <div id="welcome-install" style="display:none">
       <button onclick="pwaInstall()" style="background:linear-gradient(135deg,rgba(212,184,74,.15),rgba(168,106,40,.15));border:1px solid var(--brass);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.1em;padding:.6rem 1.35rem;border-radius:6px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--brass-light)'" onmouseout="this.style.borderColor='var(--brass)'"><svg class="welcome-cta-icon" aria-hidden="true"><use href="#gi-install"/></svg> Add to Home Screen</button>
     </div>
@@ -2319,7 +2468,7 @@ reg('rules',function(){
   <div class="rule-block"><h3><svg class="gi gi-h3" aria-hidden="true"><use href="#gi-bar-chart"/></svg> Characteristics</h3>
     <p>Every Character in Twisted has the following Characteristics printed on their Character Card. These define how the Character performs in all aspects of the game:</p>
     <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem">
-      ${['SPD Speed','STR Strength','FIN Finesse','CC ATT','CC DEF','RNG ATT','RNG DEF','ARM Armour','ALC Alchemancy','LIFE'].map(s=>{const key=s.split(' ')[0];return`<span class="stat-pill" onclick="showTerm('${key}')" title="Click for full description" style="cursor:pointer" translate="no">${s}</span>`;}).join('')}
+      ${['SPD Speed','STR Strength','FIN Finesse','CC ATT','CC DEF','RNG ATT','RNG DEF','ARM Armour','ALC Alchemancy','LIFE'].map(s=>{const key=s.split(' ')[0];return`<span class="stat-pill" onclick="showTerm('${key}')" title="Tap for full description" style="cursor:pointer" translate="no">${s}</span>`;}).join('')}
     </div>
     <p style="margin-top:.75rem">The first number listed next to Close Combat is the Attack Characteristic. The second is Defence. For Ranged the first is Attack, the second Defence.</p>
   </div>
@@ -2494,7 +2643,7 @@ reg('rules',function(){
     </div>
     <p style="margin-top:.5rem">Modifiers are cumulative: if you Charge, Outnumber, Flank and attack from the rear at the same time you receive +4 to hit.</p>
   </div>
-  <div class="rule-block" id="rule-disengage"><h3>🚪 Disengaging</h3>
+  <div class="rule-block" id="rule-disengage"><h3><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-footsteps"/></svg> Disengaging</h3>
     <p>To Disengage from Close Combat roll a Finesse Check using a Difficulty of 10 plus the Close Combat Attack value of the foe you are in base to base contact with. If you beat the value then you may make a move action away from the combat.</p>
     <p>You must move away from the Character who engaged you and may not move past them. If you fail to disengage you stay engaged in Close Combat and your opponent gains an immediate free attack against you. You defend yourself normally against this free attack. After a failed disengage you may still use your remaining Action (to attack, use an ability, etc.) and then fight a round of Close Combat as normal.</p>
     <p>You may not attempt to Disengage twice in the same turn. If you are in a Melee with multiple foes then the Disengagement check is taken against the highest Close Combat Attack value with an additional +1 for each opponent other than the first.</p>
@@ -2573,7 +2722,7 @@ reg('rules',function(){
     <p>You must have sufficient movement available to clear the entire building in one Activation. You may not end your Activation partway through a building.</p>
   </div>
   <div class="rule-block"><h3><svg class="gi gi-h3" aria-hidden="true"><use href="#gi-magic-swirl"/></svg> Fascinating Features (Optional)</h3>
-    <p>Roll D6 for number of features (1–3), then D20 for each to determine the type. These represent unusual elements of the Twisted world that can affect gameplay: explosive gunpowder, raw Essences, Sewer Slimes, sinkholes, and more. See the 🌿 Features tab for the full list of 20 Fascinating Features.</p>
+    <p>Roll D6 for number of features (1–3), then D20 for each to determine the type. These represent unusual elements of the Twisted world that can affect gameplay: explosive gunpowder, raw Essences, Sewer Slimes, sinkholes, and more. See the <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-features"/></svg> Features tab for the full list of 20 Fascinating Features.</p>
   </div>
 </div>
 
@@ -2744,15 +2893,15 @@ reg('characters',function(){
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-chars" onclick="toggleTutorial('chars')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-chars">
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
       Every playable Character from all four factions is listed here. Use the <strong style="color:var(--brass-light)">faction tabs</strong> to browse Dickensians, Servants of The Engine, Scions of the Sands, and Guild of Harmony. Tap any card to expand full stats, weapons, abilities, and lore.
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
-        <strong style="color:var(--brass-light)">Building a Company:</strong> A standard game uses <strong>200 points</strong>. Tap the <span style="color:#6BCFA8;font-weight:700">⊕</span> button on any card to add that Character to your roster; view and manage it on the <span style="color:var(--brass-light)">📋 Company</span> tab. Characters marked with ✨ (Engine Eyecon) are unique: only one copy may be taken. Any unspent points can be used on the 💎 Delights tab for equipment. Use the <span style="color:var(--brass)">★</span> to favourite Characters for quick access.
+        <strong style="color:var(--brass-light)">Building a Company:</strong> A standard game uses <strong>200 points</strong>. Tap the <span style="color:#6BCFA8;font-weight:700">⊕</span> button on any card to add that Character to your roster; view and manage it on the <span style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-company"/></svg> My Company</span> tab. Characters marked with <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg> (Engine Eyecon) are unique: only one copy may be taken. Any unspent points can be used on the <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-delights"/></svg> Delights tab for equipment. Use the <span style="color:var(--brass)">★</span> to favourite Characters for quick access.
       </div>
     </div>
   </div>
+  <div class="card" style="margin-top:.75rem;margin-bottom:.25rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap <strong>Sync</strong> at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   </div>
 </div>
 <div id="char-budget-summary"></div>
@@ -3399,13 +3548,13 @@ function charCard(c){
       <button class="fav-btn${isFav?' fav-active':''}" onclick="event.stopPropagation();toggleFav('${c.name.replace(/'/g,"\\'")}',this)" title="${isFav?'Unfavourite':'Favourite'}">★</button>
       <button class="company-btn${isInCompany(c.name)?' in-company':''}" onclick="event.stopPropagation();toggleCompany('${c.name.replace(/'/g,"\\'")}',${attrJs(c.pts)},this)" title="${isInCompany(c.name)?'Remove from Company':'Add to Company'}" style="position:absolute;top:.35rem;left:2.6rem;background:transparent;border:none;font-size:1.15rem;cursor:pointer;color:${isInCompany(c.name)?'#6BCFA8':'rgba(255,255,255,.35)'};transition:color .25s,transform .2s,filter .25s;line-height:1;padding:.35rem;text-shadow:0 1px 4px rgba(0,0,0,.6);z-index:2">⊕</button>
     </div>
-    <div class="char-stats">
-      ${sk.map(k=>`<div class="stat-cell" translate="no"><span class="stat-lbl">${k}</span><span class="stat-val ${statClass(c.stats[k])}">${c.stats[k]}</span></div>`).join('')}
+    <div class="char-stats" style="grid-template-columns:repeat(${Math.ceil(sk.length/2)},1fr)">
+      ${sk.map((k,i)=>`<div class="stat-cell" translate="no"${sk.length%2&&i===sk.length-1?' style="grid-column:span 2"':''}><span class="stat-lbl">${k}</span><span class="stat-val ${statClass(c.stats[k])}">${c.stats[k]}</span></div>`).join('')}
     </div>
     <div class="char-abilities">
       ${c.abilities.slice(0,3).map(a=>`<span class="ability-tag" translate="no">${a}</span>`).join('')}
       ${c.abilities.length>3?`<span class="ability-tag" style="opacity:.6">+${c.abilities.length-3} more</span>`:''}
-      ${(c.schools||[]).map(s=>`<span class="ability-tag alc" translate="no">⚗ ${s}</span>`).join('')}
+      ${(c.schools||[]).map(s=>`<span class="ability-tag alc" translate="no"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-alchemancy"/></svg> ${s}</span>`).join('')}
     </div>
   </div>`;
 }
@@ -3604,7 +3753,7 @@ reg('abilities',function(){
     <div class="glo-desc">${a.d}</div>
   </div>`).join('');
   document.getElementById('panel-abilities').innerHTML=`
-<div class="section-header"><h2 class="section-title">Abilities Glossary</h2><p class="section-subtitle">Every special ability. Click any entry to expand</p></div>
+<div class="section-header"><h2 class="section-title">Abilities Glossary</h2><p class="section-subtitle">Every special ability. Tap any entry to expand</p></div>
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-abil" onclick="toggleTutorial('abil')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-abil">
@@ -3632,7 +3781,7 @@ function filterType(t,btn){
 function openChar(name){
   const c=Object.values(CHARS).flat().find(x=>x.name===name);
   if(!c)return;
-  const statKeys=['SPD','STR','FIN','CC ATT','CC DEF','RNG ATT','RNG DEF','ARM','ALC','LIFE'];
+  const statKeys=['SPD','STR','FIN','CC ATT','RNG ATT','CC DEF','RNG DEF','ARM','ALC','LIFE'];   // same order as the list card (walkthrough 2026-10-03)
   const stats=statKeys.filter(k=>c.stats[k]!==undefined);
   const faction=getFaction(c.name);
   const fi=factionIcon(faction);
@@ -3647,11 +3796,11 @@ function openChar(name){
       <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(8,6,16,.95) 28%,rgba(8,6,16,.2) 60%,transparent)"></div>
       <div style="position:absolute;bottom:.75rem;left:1.1rem">
         <div style="font-family:'Cinzel',serif;font-size:1.4rem;color:var(--brass-light);text-shadow:0 2px 8px rgba(0,0,0,.8)" translate="no">${c.name}</div>
-        <div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;letter-spacing:.12em;color:${pal.rim||'var(--brass)'};text-transform:uppercase" translate="no">${c.role} · ${faction}</div>
+        <div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;letter-spacing:.12em;color:${pal.rim||'var(--brass)'};text-transform:uppercase" translate="no"><span class="mh-role">${c.role}</span><span class="mh-sep"> · </span><span class="mh-fac">${faction}</span></div>
       </div>
       <div style="position:absolute;top:.65rem;right:.9rem;text-align:right;font-family:'Cinzel Decorative',serif;font-size:1.6rem;color:var(--brass-light);text-shadow:0 2px 8px rgba(0,0,0,.8)">${c.pts}<span style="display:block;font-family:'Josefin Sans',sans-serif;font-size:.65rem;color:${pal.rim||'var(--brass)'};letter-spacing:.1em">PTS</span></div>
     </div>
-    <div class="modal-stats">
+    <div class="modal-stats ms-n${stats.length}">
       ${stats.map(k=>`<div class="ms" translate="no"><span class="ms-lbl">${k}</span><span class="ms-val">${c.stats[k]}</span></div>`).join('')}
     </div>
     ${(()=>{
@@ -3668,16 +3817,16 @@ function openChar(name){
       </div>`;
     })()}
     ${c.lore?`<div class="highlight-box">${c.lore}</div>`:''}
-    ${c.schools?`<div class="modal-section"><div class="modal-section-title">⚗ Schools</div><div>${c.schools.map(s=>`<span class="stat-pill" data-school="${s.toLowerCase()}" onclick="event.stopPropagation();goToSchool('${s}')" title="View ${s} invocations" translate="no">${s}</span>`).join('')}</div></div>`:''}
-    ${c.weapons?`<div class="modal-section"><div class="modal-section-title">⚔ Weapons</div><div class="weapon-entry">${c.weapons.split(' · ').map(w=>`<div class="weapon-stats">${w.replace(/ (Range:)/,'<br>$1')}</div>`).join('<div style="border-top:1px solid rgba(212,184,74,.08);"></div>')}</div></div>`:''}
-    <div class="modal-section"><div class="modal-section-title">⚡ Abilities</div>
+    ${c.schools?`<div class="modal-section"><div class="modal-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-alchemancy"/></svg>Schools</div><div>${c.schools.map(s=>`<span class="stat-pill" data-school="${s.toLowerCase()}" onclick="event.stopPropagation();goToSchool('${s}')" title="View ${s} invocations" translate="no">${s}</span>`).join('')}</div></div>`:''}
+    ${c.weapons?`<div class="modal-section"><div class="modal-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg>Weapons</div><div class="weapon-entry">${c.weapons.split(' · ').map(w=>`<div class="weapon-stats">${w.replace(/ (Range:)/,'<br>$1')}</div>`).join('<div style="border-top:1px solid rgba(212,184,74,.08);"></div>')}</div></div>`:''}
+    <div class="modal-section"><div class="modal-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-abilities"/></svg>Abilities</div>
       ${c.abilities.map(a=>`<div class="ability-entry" onclick="this.classList.toggle('expanded')">
         <div class="ability-ename" translate="no">${a}</div>
         <div class="ability-edesc">${abilityDesc(a)}</div>
       </div>`).join('')}
     </div>
-    ${c.ammo?`<div class="modal-section"><div class="modal-section-title">🔫 Ammunition Types</div><div class="weapon-entry">${c.ammo.split(' · ').map(a=>`<div class="weapon-stats">${a.replace(/ (Range:)/,'<br>$1')}</div>`).join('<div style="border-top:1px solid rgba(212,184,74,.08);"></div>')}</div></div>`:''}
-    ${c.needsVerification?`<div class="notice warning" style="margin-top:.75rem">⚠ Guild character: stats pending verification against physical cards. Some values may differ from final printed cards.</div>`:''}
+    ${c.ammo?`<div class="modal-section"><div class="modal-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-bullets"/></svg>Ammunition Types</div><div class="weapon-entry">${c.ammo.split(' · ').map(a=>`<div class="weapon-stats">${a.replace(/ (Range:)/,'<br>$1')}</div>`).join('<div style="border-top:1px solid rgba(212,184,74,.08);"></div>')}</div></div>`:''}
+    ${c.needsVerification?`<div class="notice warning" style="margin-top:.75rem"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-hazard-sign"/></svg> Guild character: stats pending verification against physical cards. Some values may differ from final printed cards.</div>`:''}
     <div class="modal-section" style="margin-top:.5rem">
       <button onclick="toggleCompany('${c.name.replace(/'/g,"\\'")}',${attrJs(c.pts)})" style="width:100%;background:linear-gradient(135deg,rgba(61,170,133,.1),rgba(61,170,133,.06));border:1px solid rgba(61,170,133,.35);color:#6BCFA8;font-family:'Josefin Sans',sans-serif;font-size:.78rem;letter-spacing:.08em;padding:.55rem;border-radius:6px;cursor:pointer;transition:all .2s">${isInCompany(c.name)?'✕ Remove from Company':'⊕ Add to Company ('+c.pts+'pts)'}</button>
     </div>`;
@@ -3740,14 +3889,14 @@ water:[
 reg('alchemancy',function(){
   if(document.getElementById('panel-alchemancy').innerHTML.trim())return;
   const schoolDefs=[
-    {k:'fire',icon:'🔥',name:'Fire',theme:'Destruction & Enhancement',cls:'sc-fire'},
-    {k:'earth',icon:'🌿',name:'Earth',theme:'Life, Death & Summoning',cls:'sc-earth'},
-    {k:'air',icon:'💨',name:'Air',theme:'Protection & Movement',cls:'sc-air'},
-    {k:'water',icon:'💧',name:'Water',theme:'Healing & Weakening',cls:'sc-water'},
+    {k:'fire',icon:'<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-fire"/></svg>',name:'Fire',theme:'Destruction &\u00a0Enhancement',cls:'sc-fire'},
+    {k:'earth',icon:'<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-vine-leaf"/></svg>',name:'Earth',theme:'Life, Death &\u00a0Summoning',cls:'sc-earth'},
+    {k:'air',icon:'<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-whirlwind"/></svg>',name:'Air',theme:'Protection &\u00a0Movement',cls:'sc-air'},
+    {k:'water',icon:'<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-droplet"/></svg>',name:'Water',theme:'Healing &\u00a0Weakening',cls:'sc-water'},
   ];
   // Essence tracker
   const essRows=['fire','earth','air','water'].map((el,i)=>{
-    const icons=['🔥','🌿','💨','💧'],labels=['Fire','Earth','Air','Water'];
+    const icons=['<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-fire"/></svg>','<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-vine-leaf"/></svg>','<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-whirlwind"/></svg>','<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-droplet"/></svg>'],labels=['Fire','Earth','Air','Water'];
     return`<div class="ess-row">
       <span class="ess-lbl">${icons[i]} ${labels[i]}</span>
       <div class="ess-pips" id="ep-${el}">${Array(6).fill(0).map((_,j)=>`<div class="pip pip-${el} full" onclick="togglePip('${el}',${j},this)"></div>`).join('')}</div>
@@ -3766,10 +3915,10 @@ reg('alchemancy',function(){
         <div class="invoc-desc">${v.d}${v.brk?'<br><em style="color:var(--brass)">Breaking: '+v.brk+'</em>':''}</div>
         <div class="invoc-badges">
           <span class="ib ib-action">${v.ac} Action${v.ac>1?'s':''}</span>
-          <span class="ib ib-range">📍 ${v.rng}</span>
+          <span class="ib ib-range"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-position-marker"/></svg> ${v.rng}</span>
           <span class="ib ib-diff">Diff ${v.df}</span>
-          <span class="ib ib-elem">⚗ ${v.el}</span>
-          <span class="ib" style="background:rgba(212,184,74,.08);border:1px solid rgba(212,184,74,.18);color:var(--brass)">⏱ ${v.dur}</span>
+          <span class="ib ib-elem"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-alchemancy"/></svg> ${v.el}</span>
+          <span class="ib" style="background:rgba(212,184,74,.08);border:1px solid rgba(212,184,74,.18);color:var(--brass)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-sands-of-time"/></svg> ${v.dur}</span>
         </div>
       </div>
     </div>`).join('')}
@@ -3781,16 +3930,16 @@ reg('alchemancy',function(){
   <div class="tut-body" id="tut-body-alch">
   <div class="card" style="margin-top:.75rem;border-color:rgba(147,112,219,.25);background:linear-gradient(135deg,rgba(147,112,219,.08),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
-      Characters with an Alchemancy (ALC) stat greater than 0 can channel <strong style="color:var(--brass-light)">Invocations</strong>: powerful elemental effects drawn from four schools: \ud83d\udd25 Fire (destruction), \ud83c\udf3f Earth (life & death), \ud83d\udca8 Air (protection & movement), and \ud83d\udca7 Water (healing & weakening).
+      Characters with an Alchemancy (ALC) stat greater than 0 can channel <strong style="color:var(--brass-light)">Invocations</strong>: powerful elemental effects drawn from four schools: <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-fire"/></svg> Fire (destruction), <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-vine-leaf"/></svg> Earth (life & death), <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-whirlwind"/></svg> Air (protection & movement), and <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-droplet"/></svg> Water (healing & weakening).
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
         <strong style="color:var(--brass-light)">Calling an Invocation:</strong> Spend the required Elemental Essences (shown on the card), then roll D20 + ALC \u2265 Difficulty. It costs 1 Action per Power level. If the check fails, half the Essences are lost (rounded down, minimum 1). If the D20 roll is a natural 1, a <strong style="color:var(--rust-light)">Backfire</strong> occurs: the Invocation affects the caster instead! Invocations may be called in Close Combat at \u22122 to the check.<br><br>
-        <strong style="color:var(--brass-light)">Essence Tracker:</strong> Use the pip tracker below to mark Essences spent during play. Click a pip to spend it; tap Refill to recover during the Maintenance Phase. Each Alchemancer\u2019s Character Card shows their starting Essence allocation.
+        <strong style="color:var(--brass-light)">Essence Tracker:</strong> Use the pip tracker below to mark Essences spent during play. Tap a pip to spend it; tap Refill to recover during the Maintenance Phase. Each Alchemancer\u2019s Character Card shows their starting Essence allocation.
       </div>
     </div>
   </div>
   </div>
 </div>
-<div class="ess-tracker"><div style="font-family:'Cinzel',serif;font-size:.88rem;color:var(--brass-light);margin-bottom:.9rem">\u2697 Essence Tracker: click pips to spend, Refill to recover</div>${essRows}</div>
+<div class="ess-tracker"><div style="font-family:'Cinzel',serif;font-size:.88rem;color:var(--brass-light);margin-bottom:.9rem"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-alchemancy"/></svg> Essence Tracker: tap pips to spend, Refill to recover</div>${essRows}</div>
 <div class="schools-grid">${schoolTabs}</div>${lists}`;
   setTimeout(loadEssState,50);
   setTimeout(()=>initTutorial('alch'),60);
@@ -3852,7 +4001,7 @@ function clearConds(charKey){
 
 function abilityDesc(name){
   const a=ABILITIES.find(x=>x.n===name||name.startsWith(x.n));
-  return a?a.d:'Click to see description. Check the Abilities tab for full details.';
+  return a?a.d:'Tap to see description. Check the Abilities tab for full details.';
 }
 
 // Scroll a Rules section or block to just below the header (1.1.2). The header only
@@ -3917,8 +4066,8 @@ reg('canopic',function(){
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
       This page simulates the <strong style="color:var(--brass-light)">Canopic Deck</strong> from the Scions of the Sands expansion. Characters with the Canopic Jar ability draw from this deck at the start of their Activation to bond with an ancient spirit, gaining stat bonuses, new abilities, and a personality quirk, but risk being Dominated if they stay connected too long.
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
-        <strong style="color:var(--brass-light)">Draw Spirit:</strong> Tap the deck or the <strong>Draw Spirit</strong> button to reveal the next spirit card. It shows Access Difficulty, stat bonuses, selectable abilities, the Spirit Influence quirk, and Dominance penalties. Use the <strong>Dominance tracker</strong> on the drawn card to mark off boxes each Maintenance Phase. Browse all 20 spirits in the reference list on the right. Tap <strong>\ud83d\udd04 Shuffle & Reset</strong> when disconnecting or starting a new game.<br><br>
-        <strong style="color:var(--brass-light)">Full rules</strong> for Accessing, Dominance, Disconnecting, Being Overcome (nat 1), and Subduing (nat 20) are on the <a href="#" onclick="event.preventDefault();document.querySelector('.nav-btn[data-panel=rules]').click()" style="color:var(--brass-light)">📖 Rules</a> tab under <em>Canopic Jars (Scions of the Sands)</em>.
+        <strong style="color:var(--brass-light)">Draw Spirit:</strong> Tap the deck or the <strong>Draw Spirit</strong> button to reveal the next spirit card. It shows Access Difficulty, stat bonuses, selectable abilities, the Spirit Influence quirk, and Dominance penalties. Use the <strong>Dominance tracker</strong> on the drawn card to mark off boxes each Maintenance Phase. Browse all 20 spirits in the All 20 Spirits list. Tap <strong><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-card-random"/></svg> Shuffle & Reset</strong> when disconnecting or starting a new game.<br><br>
+        <strong style="color:var(--brass-light)">Full rules</strong> for Accessing, Dominance, Disconnecting, Being Overcome (nat 1), and Subduing (nat 20) are on the <a href="#" onclick="event.preventDefault();document.querySelector('.nav-btn[data-panel=rules]').click()" style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-rules"/></svg> Rules</a> tab under <em>Canopic Jars (Scions of the Sands)</em>.
       </div>
     </div>
   </div>
@@ -3927,19 +4076,19 @@ reg('canopic',function(){
 <div class="can-layout">
   <div>
     <div class="can-deck" onclick="drawSpirit()">
-      <span class="jar-icon">🏺</span>
+      <span class="jar-icon"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-canopic"/></svg></span>
       <div style="font-family:'Cinzel',serif;color:var(--brass-light);font-size:1.05rem;margin-bottom:.4rem">Canopic Deck</div>
-      <div id="can-count" style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--parchment-dark);margin-bottom:.9rem">20 spirits · click to draw</div>
+      <div id="can-count" style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--parchment-dark);margin-bottom:.9rem">20 spirits · tap to draw</div>
       <button class="draw-btn" onclick="event.stopPropagation();drawSpirit()">Draw Spirit</button>
       <div style="margin-top:.65rem">
-        <button onclick="event.stopPropagation();resetDeck()" style="background:transparent;border:1px solid rgba(212,184,74,.18);color:var(--brass-dark);font-size:.72rem;padding:.25rem .5rem;border-radius:3px;cursor:pointer;font-family:'Josefin Sans',sans-serif">🔄 Shuffle & Reset</button>
+        <button onclick="event.stopPropagation();resetDeck()" style="background:transparent;border:1px solid rgba(212,184,74,.18);color:var(--brass-dark);font-size:.72rem;padding:.25rem .5rem;border-radius:3px;cursor:pointer;font-family:'Josefin Sans',sans-serif"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-card-random"/></svg> Shuffle & Reset</button>
       </div>
     </div>
     <div id="drawn-spirit" style="margin-top:1.35rem"></div>
   </div>
   <div>
     <div class="card">
-      <div class="card-title">📜 All 20 Spirits${eeSigilHTML('egypt','vertical-align:middle;margin-left:.45rem;')}</div>
+      <div class="card-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-scroll-quill"/></svg> All 20 Spirits${eeSigilHTML('egypt','vertical-align:middle;margin-left:.45rem;')}</div>
       <div id="spirit-list">
         ${SPIRITS.map(s=>`<div class="spirit-entry" onclick="this.classList.toggle('expanded')">
           <div style="display:flex;justify-content:space-between;align-items:center">
@@ -3953,7 +4102,7 @@ reg('canopic',function(){
               <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);margin-bottom:.2rem">Bonuses</div><span style="font-size:.88rem;color:var(--parchment);line-height:1.6">${s.bonus}</span></div>
               <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);margin-bottom:.2rem">Abilities <span style="font-size:.68rem;color:var(--parchment-dark)">(choose ${s.pick} of ${s.abil.split(',').length})</span></div><span style="font-size:.88rem;color:var(--parchment);line-height:1.6">${s.abil}</span></div>
             </div>
-            <div style="margin-top:.55rem;font-size:.82rem;border-top:1px solid rgba(212,184,74,.1);padding-top:.45rem"><strong style="color:var(--brass-light)">⚠ Quirk:</strong> ${s.quirk}</div>
+            <div style="margin-top:.55rem;font-size:.82rem;border-top:1px solid rgba(212,184,74,.1);padding-top:.45rem"><strong style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-hazard-sign"/></svg> Quirk:</strong> ${s.quirk}</div>
             <div style="margin-top:.4rem;font-size:.82rem;color:var(--rust-light)"><strong>When Dominated:</strong> ${s.dominated}</div>
           </div>
         </div>`).join('')}
@@ -4000,7 +4149,7 @@ function renderDrawn(){
         <button onclick="setDom(${Math.min(d+1,dt)})" style="background:rgba(220,56,56,.1);border:1px solid rgba(220,56,56,.28);color:var(--rust-light);font-family:'Josefin Sans',sans-serif;font-size:.72rem;padding:.28rem .55rem;border-radius:3px;cursor:pointer">+1 Turn (Dom Risk)</button>
         <button onclick="disconnectJar()" style="background:transparent;border:1px solid rgba(212,184,74,.18);color:var(--brass-dark);font-family:'Josefin Sans',sans-serif;font-size:.72rem;padding:.28rem .55rem;border-radius:3px;cursor:pointer">Disconnect</button>
       </div>
-      ${d>=dt?`<div style="margin-top:.5rem;padding:.45rem;background:rgba(220,56,56,.1);border:1px solid rgba(220,56,56,.3);border-radius:4px;font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--rust-light)"><strong>⚠ DOMINATED!</strong> ${s.dominated}</div>`:''}
+      ${d>=dt?`<div style="margin-top:.5rem;padding:.45rem;background:rgba(220,56,56,.1);border:1px solid rgba(220,56,56,.3);border-radius:4px;font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--rust-light)"><strong><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-hazard-sign"/></svg> DOMINATED!</strong> ${s.dominated}</div>`:''}
     </div>
   </div>`;
 }
@@ -4009,24 +4158,24 @@ function disconnectJar(){
   if(window._drawn){window._canDeck.push(window._drawn);shuffle(window._canDeck);}
   window._drawn=null;window._domLevel=0;
   document.getElementById('can-count').textContent=window._canDeck.length+' spirits remaining';
-  document.getElementById('drawn-spirit').innerHTML='<div class="notice">🏺 Spirit returned and deck shuffled.</div>';
+  document.getElementById('drawn-spirit').innerHTML='<div class="notice"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-canopic"/></svg> Spirit returned and deck shuffled.</div>';
 }
 function resetDeck(){
   window._canDeck=[...SPIRITS];shuffle(window._canDeck);window._drawn=null;window._domLevel=0;
-  document.getElementById('can-count').textContent='20 spirits · click to draw';
+  document.getElementById('can-count').textContent='20 spirits · tap to draw';
   document.getElementById('drawn-spirit').innerHTML='';
 }
 function showSpiritDetail(name){
   const s=SPIRITS.find(x=>x.n===name);if(!s)return;
   document.getElementById('spirit-detail').innerHTML=`<div class="card">
-    <div class="card-title" translate="no">🏺 ${s.n}: ${s.title}</div>
+    <div class="card-title" translate="no"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-canopic"/></svg> ${s.n}: ${s.title}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;font-size:.82rem;margin-bottom:.75rem">
       <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);margin-bottom:.25rem">Access Check</div>Difficulty <strong style="color:var(--brass-light)">${s.acc}</strong> · Stat: <strong style="color:var(--brass-light)">${s.accSt}</strong></div>
       <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);margin-bottom:.25rem">Dominance</div>Difficulty <strong style="color:var(--rust-light)">${s.dom}</strong> · Stat: <strong style="color:var(--rust-light)">${s.domSt}</strong></div>
       <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);margin-bottom:.25rem">Bonuses</div>${s.bonus}</div>
       <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);margin-bottom:.25rem">Abilities <span style="font-size:.68rem;color:var(--parchment-dark)">(choose ${s.pick} of ${s.abil.split(',').length})</span></div>${s.abil}</div>
     </div>
-    <div style="font-size:.8rem;margin-bottom:.5rem"><strong style="color:var(--brass-light)">⚠ Quirk:</strong> ${s.quirk}</div>
+    <div style="font-size:.8rem;margin-bottom:.5rem"><strong style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-hazard-sign"/></svg> Quirk:</strong> ${s.quirk}</div>
     <div style="font-size:.8rem;color:var(--rust-light)"><strong>When Dominated:</strong> ${s.dominated}</div>
   </div>`;
 }
@@ -4199,26 +4348,26 @@ reg('missions',function(){
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-missions" onclick="toggleTutorial('missions')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-missions">
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
       Every game of Twisted uses a randomly generated mission. After setting up terrain, players determine their mission by rolling for a <strong style="color:var(--brass-light)">Deployment Type</strong> (D10), a <strong style="color:var(--brass-light)">Primary Objective</strong> (D20), and optionally <strong style="color:var(--brass-light)">Fascinating Features</strong> (D6 for quantity, then D20 each). Each player also draws a secret <strong style="color:var(--brass-light)">Tarot of Taxing Tasks</strong> card for bonus Victory Points.
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
-        <strong style="color:var(--brass-light)">Using This Page:</strong> Tap <strong><svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Generate Mission</strong> to instantly roll all components at once: deployment, objective, features, and two secret Tarot cards. Or browse the full lists of deployments and objectives below. Objectives marked with a green <strong style="color:#86C9AC">3+</strong> badge are suitable for multi-company games.
+        <strong style="color:var(--brass-light)">Using This Page:</strong> Tap <strong><svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Generate Mission</strong> to instantly roll all components at once: deployment, objective, features, and two secret Tarot cards. Or browse the full lists of deployments and objectives below. Objectives marked with a green <strong style="color:#86C9AC">3+</strong> badge are suitable for <span class="nw">multi-company</span> games.
       </div>
     </div>
   </div>
+  <div class="card" style="margin-top:.75rem;margin-bottom:.25rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap <strong>Sync</strong> at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   </div>
 </div>
 <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem">
 <button class="gen-btn" style="display:inline-block;margin:0" onclick="genMission()"><svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Generate Mission</button>
 <button id="mission-clear-btn" class="gen-btn" onclick="clearMission()" style="display:none;margin:0;background:rgba(220,56,56,.08);border-color:rgba(220,56,56,.3);color:#cc6a5a">✕ Clear Mission</button>
 </div>
-<div class="mission-box" id="mission-result"><div style="text-align:center;padding:3rem 0;color:var(--parchment-dark);font-family:'IM Fell English',serif;font-size:1rem">Click Generate Mission to create a random encounter</div></div>
+<div class="mission-box" id="mission-result"><div style="text-align:center;padding:3rem 0;color:var(--parchment-dark);font-family:'IM Fell English',serif;font-size:1rem">Tap Generate Mission to create a random encounter</div></div>
 <div class="grid-2">
   <div class="card">
     <div class="card-title" style="cursor:pointer" onclick="var el=document.getElementById('multi-co-ref');el.style.display=el.style.display==='none'?'block':'none';this.querySelector('.mc-chev').style.transform=el.style.display==='none'?'':'rotate(90deg)'">
-      <span class="mc-chev" style="display:inline-block;transition:transform .2s;color:#86C9AC;margin-right:.3rem">▸</span> ⚔ Multi-Company Play (3+ Companies)
+      <span class="mc-chev" style="display:inline-block;transition:transform .2s;color:#86C9AC;margin-right:.3rem">▸</span> <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg> Multi-Company Play (3+ Companies)
     </div>
     <div id="multi-co-ref" style="display:none;margin-top:.5rem">
       <div style="font-size:.78rem;color:var(--parchment-dark);line-height:1.6;margin-bottom:.6rem">Not all Primary Objectives are suitable for more than two opposing Companies. Use the D12 table below should you have 3 or more Companies present. There may be some alterations to some of the Primary Objectives. See the mission description for more information.</div>
@@ -4241,7 +4390,7 @@ reg('missions',function(){
   </div>
   <div class="card">
     <div class="card-title" style="cursor:pointer" onclick="var el=document.getElementById('tarot-ref');el.style.display=el.style.display==='none'?'block':'none';this.querySelector('.tr-chev').style.transform=el.style.display==='none'?'':'rotate(90deg)'">
-      <span class="tr-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> 🃏 Tarot of Taxing Tasks (${TAROT.length} Cards)
+      <span class="tr-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-tarot"/></svg> Tarot of Taxing Tasks (${TAROT.length} Cards)
     </div>
     <div id="tarot-ref" style="display:none;margin-top:.5rem">
       <div style="font-size:.78rem;color:var(--parchment-dark);line-height:1.6;margin-bottom:.6rem">Each player draws one Tarot card at the start of the game as a secret bonus objective. Keep it hidden from your opponent. Reveal it at the end of the game to claim bonus Victory Points if you fulfilled the condition.</div>
@@ -4253,7 +4402,7 @@ reg('missions',function(){
   </div>
   <div class="card">
     <div class="card-title" style="cursor:pointer" onclick="var el=document.getElementById('deploys-ref');el.style.display=el.style.display==='none'?'block':'none';this.querySelector('.dep-chev').style.transform=el.style.display==='none'?'':'rotate(90deg)'">
-      <span class="dep-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> 🗺 Deployments (D10)
+      <span class="dep-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-missions"/></svg> Deployments (D10)
     </div>
     <div id="deploys-ref" style="display:none;margin-top:.5rem">
       ${DEPLOYS.map(d=>`<div id="deploy-${d.id}" style="padding:.5rem 0;border-bottom:1px solid rgba(212,184,74,.07);font-size:.79rem;cursor:pointer" onclick="event.stopPropagation();this.querySelector('.dep-rules').style.display=this.querySelector('.dep-rules').style.display==='none'?'block':'none'">
@@ -4265,7 +4414,7 @@ reg('missions',function(){
   </div>
   <div class="card">
     <div class="card-title" style="cursor:pointer" onclick="var el=document.getElementById('objectives-ref');el.style.display=el.style.display==='none'?'block':'none';this.querySelector('.obj-chev').style.transform=el.style.display==='none'?'':'rotate(90deg)'">
-      <span class="obj-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> 🎯 Primary Objectives (D20)
+      <span class="obj-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-bullseye"/></svg> Primary Objectives (D20)
     </div>
     <div id="objectives-ref" style="display:none;margin-top:.5rem">
       ${OBJECTIVES.map((o,i)=>`<div id="obj-${i+1}" class="glo-entry mission-obj" onclick="event.stopPropagation();this.classList.toggle('expanded')">
@@ -4291,7 +4440,7 @@ function genMission(){
 }
 function clearMission(){
   Store.set('mission',null);
-  document.getElementById('mission-result').innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--parchment-dark);font-family:\'IM Fell English\',serif;font-size:1rem">Click Generate Mission to create a random encounter</div>';
+  document.getElementById('mission-result').innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--parchment-dark);font-family:\'IM Fell English\',serif;font-size:1rem">Tap Generate Mission to create a random encounter</div>';
   const cb=document.getElementById('mission-clear-btn');if(cb)cb.style.display='none';
 }
 function renderMission(){
@@ -4307,15 +4456,15 @@ function renderMission(){
   document.getElementById('mission-result').innerHTML=`
     <div class="m-head">Mission Generated</div>
     <div class="m-name" translate="no">${obj.n}</div>
-    ${obj.multi?'<div style="margin-bottom:.5rem"><span style="background:rgba(61,170,133,.15);color:#86C9AC;border:1px solid rgba(61,170,133,.3);border-radius:4px;padding:.15em .5em;font-size:.7rem;font-family:\'Josefin Sans\',sans-serif">⚔ Suitable for 3+ Companies (D12: '+obj.multi+')</span></div>':''}
+    ${obj.multi?'<div style="margin-bottom:.5rem"><span style="background:rgba(61,170,133,.15);color:#86C9AC;border:1px solid rgba(61,170,133,.3);border-radius:4px;padding:.15em .5em;font-size:.7rem;font-family:\'Josefin Sans\',sans-serif"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg> Suitable for 3+ Companies (D12: '+obj.multi+')</span></div>':''}
     <div style="font-size:.83rem;color:var(--parchment-dark)">${obj.d}</div>
     <div class="m-detail-grid">
-      <div class="m-detail"><span class="m-dlbl">🗺 Deployment</span><div class="m-dval" translate="no">${dep.id}. ${dep.n}</div><div style="font-size:.7rem;color:var(--parchment-dark);margin-top:.2rem">${dep.sum}</div><div style="margin-top:.35rem;padding:.35rem .5rem;background:rgba(212,184,74,.04);border-radius:4px;border-left:2px solid var(--brass-dark);font-size:.7rem;line-height:1.6;color:var(--parchment)">${dep.rules}</div></div>
-      <div class="m-detail"><span class="m-dlbl">⏱ Game Length</span><div class="m-dval" style="font-family:'Cinzel Decorative',serif;font-size:1.4rem">${obj.turns||6} turns</div></div>
-      <div class="m-detail"><span class="m-dlbl">🌿 Features (${nf})</span>${feats.map(f=>`<div style="font-size:.72rem;color:var(--parchment-dark);margin-top:.18rem">• <strong style="color:var(--brass-light)" translate="no">${f.id}. ${f.n}</strong>: ${f.sum}</div>`).join('')}<div style="margin-top:.4rem"><a href="#" onclick="navTo('features');setTimeout(()=>{[${feats.map(f=>f.id).join(',')}].forEach(id=>{const el=document.getElementById('feat-'+id);if(el&&!el.classList.contains('expanded'))el.classList.add('expanded')});const first=document.getElementById('feat-${feats[0]?.id}');if(first)first.scrollIntoView({behavior:'smooth',block:'start'})},150);return false" style="font-size:.72rem;color:var(--brass);font-family:'Josefin Sans',sans-serif">View full rules on 🌿 Features tab →</a></div></div>
+      <div class="m-detail"><span class="m-dlbl"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-missions"/></svg> Deployment</span><div class="m-dval" translate="no">${dep.id}. ${dep.n}</div><div style="font-size:.7rem;color:var(--parchment-dark);margin-top:.2rem">${dep.sum}</div><div style="margin-top:.35rem;padding:.35rem .5rem;background:rgba(212,184,74,.04);border-radius:4px;border-left:2px solid var(--brass-dark);font-size:.7rem;line-height:1.6;color:var(--parchment)">${dep.rules}</div></div>
+      <div class="m-detail"><span class="m-dlbl"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-sands-of-time"/></svg> Game Length</span><div class="m-dval" style="font-family:'Cinzel Decorative',serif;font-size:1.4rem">${obj.turns||6} turns</div></div>
+      <div class="m-detail"><span class="m-dlbl"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-features"/></svg> Features (${nf})</span>${feats.map(f=>`<div style="font-size:.72rem;color:var(--parchment-dark);margin-top:.18rem">• <strong style="color:var(--brass-light)" translate="no">${f.id}. ${f.n}</strong>: ${f.sum}</div>`).join('')}<div style="margin-top:.4rem"><a href="#" onclick="navTo('features');setTimeout(()=>{[${feats.map(f=>f.id).join(',')}].forEach(id=>{const el=document.getElementById('feat-'+id);if(el&&!el.classList.contains('expanded'))el.classList.add('expanded')});const first=document.getElementById('feat-${feats[0]?.id}');if(first)first.scrollIntoView({behavior:'smooth',block:'start'})},150);return false" style="font-size:.72rem;color:var(--brass);font-family:'Josefin Sans',sans-serif">View full rules on <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-features"/></svg> Features tab →</a></div></div>
     </div>
     <div style="margin-top:1rem">
-      <div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;letter-spacing:.08em;color:var(--brass);text-transform:uppercase;margin-bottom:.5rem">🃏 Tarot of Taxing Tasks (Secret Objectives)</div>
+      <div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;letter-spacing:.08em;color:var(--brass);text-transform:uppercase;margin-bottom:.5rem"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-tarot"/></svg> Tarot of Taxing Tasks (Secret Objectives)</div>
       <div class="m-obj">Player A: <strong style="color:var(--brass-light)" translate="no">${t1.n}</strong><div style="font-size:.75rem;color:var(--parchment-dark);margin-top:.2rem">${t1.d}</div></div>
       <div class="m-obj">Player B: <strong style="color:var(--brass-light)" translate="no">${t2.n}</strong><div style="font-size:.75rem;color:var(--parchment-dark);margin-top:.2rem">${t2.d}</div></div>
     </div>
@@ -4359,8 +4508,8 @@ reg('campaign',function(){
           <span class="m-num">Mission ${m.num}</span>
           <div class="m-title" translate="no">${m.name}</div>
           <div class="m-desc">${m.desc}</div>
-          <div style="margin-top:.38rem;font-family:'Josefin Sans',sans-serif;font-size:.78rem;color:var(--parchment-dark)">🎯 ${m.obj}</div>
-          <div style="margin-top:.22rem;font-family:'Josefin Sans',sans-serif;font-size:.6rem;color:var(--blue)">⭐ ${m.spec}</div>
+          <div style="margin-top:.38rem;font-family:'Josefin Sans',sans-serif;font-size:.78rem;color:var(--parchment-dark)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-bullseye"/></svg> ${m.obj}</div>
+          <div style="margin-top:.22rem;font-family:'Josefin Sans',sans-serif;font-size:.6rem;color:var(--blue)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg> ${m.spec}</div>
         </div>`).join('')}
       </div>
     </div>`;}).join('');
@@ -4369,7 +4518,7 @@ reg('campaign',function(){
 <div style="max-width:720px;margin:0 auto">
   <div class="card" style="margin-bottom:1.25rem;border-color:rgba(100,149,237,.25);background:linear-gradient(135deg,rgba(100,149,237,.08),rgba(30,28,40,.9))">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
-      <strong style="color:var(--brass-light)">\ud83c\udfc6 The Dangers of Undue Alchemancy${eeSigilHTML('guild','vertical-align:middle;margin-left:.45rem;')}</strong><br>
+      <strong style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-laurel-crown"/></svg> The Dangers of Undue Alchemancy${eeSigilHTML('guild','vertical-align:middle;margin-left:.45rem;')}</strong><br>
       This is the official 10-mission narrative campaign from the Twisted core rulebook, pitting two Companies against each other across four acts of escalating conflict. Each mission has a unique <strong style="color:var(--brass-light)">Primary Objective</strong> plus a <strong style="color:var(--blue)">Special Rule</strong> that shapes the encounter.
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
         <strong style="color:var(--brass-light)">Using This Tracker:</strong> Name your two Companies using the input fields below. Use the <strong>+/\u2212</strong> buttons to track cumulative Victory Points across the campaign. Tap any mission card to mark it as <strong style="color:#86C9AC">completed</strong>. Missions should be played in order within each act. Hit <strong>Reset Campaign</strong> to start fresh.
@@ -4403,7 +4552,7 @@ function toggleMission(n){
   if(window._done.has(n)){window._done.delete(n);el.classList.remove('done');}
   else{window._done.add(n);el.classList.add('done');}
   Store.set('camp_done',[...window._done]);
-  if(window._done.size===10){setTimeout(()=>showToast('🏆 Campaign Complete! Well played!',4000),300);}
+  if(window._done.size===10){setTimeout(()=>showToast('Campaign Complete! Well played!',4000),300);}
 }
 function adj(s,d){window._scores[s]=Math.max(0,(window._scores[s]||0)+d);document.getElementById('sc-'+s).textContent=window._scores[s];Store.set('camp_scores',window._scores);}
 // B-8: expand/collapse a campaign Act. Toggles .open on the .camp-act and keeps
@@ -4422,7 +4571,7 @@ reg('dice',function(){
 <div class="section-header"><h2 class="section-title">Dice Roller</h2><p class="section-subtitle">D20 checks, opposed rolls & damage calculator</p></div>
 <div class="dice-section">
 <div class="card" style="margin-bottom:1.35rem">
-  <div class="card-title">💣 Scatter Die</div>
+  <div class="card-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-grenade"/></svg> Scatter Die</div>
   <div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;color:var(--parchment-dark);margin-bottom:.9rem;line-height:1.5">Roll D8 for direction and D6 for distance. Used for grenade scatter, random movement (Disorient, Drunkard), cache drops, Timeskip Bubbles, and any effect requiring a random direction.</div>
   <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap">
     <div style="position:relative;width:160px;height:160px" id="scatter-compass">
@@ -4442,7 +4591,7 @@ reg('dice',function(){
   </div>
 </div>
 <div class="dice-main">
-  <div class="dice-lbl">Result${eeSigilHTML('dickensians','vertical-align:middle;margin-left:.45rem;')}</div>
+  <div class="dice-lbl"><span class="dl-txt">Result${eeSigilHTML('dickensians','position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.25rem;')}</span></div>
   <span class="dice-num" id="dn">–</span>
   <div id="dspec"></div>
   <div class="dice-btns">
@@ -4460,15 +4609,15 @@ reg('dice',function(){
   <div class="roll-hist" id="roll-history"></div>
 </div>
 <div class="card" style="margin-bottom:1.35rem">
-  <div class="card-title">💥 Damage Calculator</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;align-items:end;margin-bottom:.9rem">
-    <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;color:var(--brass);margin-bottom:.32rem;letter-spacing:.08em;text-transform:uppercase">Dice</div>
+  <div class="card-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-impact-point"/></svg> Damage Calculator</div>
+  <div class="dmg-grid">
+    <div><label class="dmg-lbl" for="dd">Dice</label>
       <select id="dd" style="background:rgba(26,18,8,.8);border:1px solid rgba(212,184,74,.28);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;padding:.38rem;border-radius:4px;width:100%">
         <option>D4</option><option>D6</option><option>D8</option><option>D10</option><option>D12</option>
       </select></div>
-    <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--brass-dark);margin-bottom:.28rem;letter-spacing:.08em;text-transform:uppercase">+Modifier</div>
+    <div><label class="dmg-lbl" for="dm">+Modifier</label>
       <input class="mod-input" id="dm" type="number" value="0" style="width:100%;display:block"></div>
-    <div><div style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--brass-dark);margin-bottom:.28rem;letter-spacing:.08em;text-transform:uppercase">Target Armour</div>
+    <div><label class="dmg-lbl" for="da" title="Target Armour">Armour</label>
       <input class="mod-input" id="da" type="number" value="0" style="width:100%;display:block"></div>
   </div>
   <div style="display:flex;gap:1rem;margin-bottom:.9rem;flex-wrap:wrap">
@@ -4481,7 +4630,7 @@ reg('dice',function(){
   <div style="text-align:center;margin-top:.5rem"><button id="dmg-clear-btn" onclick="document.getElementById('dmg-res').textContent='';document.getElementById('dmg-det').textContent='';this.style.display='none'" style="display:none;background:transparent;border:1px solid rgba(220,56,56,.3);color:var(--rust-light);font-family:'Josefin Sans',sans-serif;font-size:.68rem;letter-spacing:.07em;padding:.22rem .6rem;border-radius:4px;cursor:pointer;transition:all .2s">✕ Clear</button></div>
 </div>
 <div class="card">
-  <div class="card-title">⚔ Opposed Roll</div>
+  <div class="card-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg> Opposed Roll</div>
   <div class="opp-grid">
     <div class="opp-side"><h4>Attacker</h4><span class="opp-val" id="oa">–</span>
       <div style="font-family:'Josefin Sans',sans-serif;font-size:.8rem;color:var(--brass);margin:.3rem 0">Modifier</div>
@@ -4497,7 +4646,7 @@ reg('dice',function(){
   </div>
   <div id="opp-res" style="text-align:center;padding:.65rem;margin-top:.4rem;font-family:'Cinzel',serif;font-size:.95rem"></div>
   <div style="display:flex;gap:.6rem;justify-content:center;margin:.9rem auto">
-    <button class="d-btn primary" onclick="rollBoth()" style="width:180px">Roll Both ⚔</button>
+    <button class="d-btn primary" onclick="rollBoth()" style="width:180px">Roll Both <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg></button>
     <button id="opp-clear-btn" onclick="document.getElementById('oa').textContent='–';document.getElementById('ob').textContent='–';document.getElementById('opp-res').innerHTML='';window._oppVals={a:null,b:null};this.style.display='none'" style="display:none;background:transparent;border:1px solid rgba(220,56,56,.3);color:var(--rust-light);font-family:'Josefin Sans',sans-serif;font-size:.68rem;letter-spacing:.07em;padding:.22rem .6rem;border-radius:4px;cursor:pointer;transition:all .2s">✕ Clear</button>
   </div>
 </div>
@@ -4530,8 +4679,8 @@ function rollD(sides){
   el.classList.remove('rolling');void el.offsetWidth;el.classList.add('rolling');
   el.textContent=r;
   const sp=document.getElementById('dspec');
-  if(sides===20&&r===20)sp.innerHTML='<div class="spec-result spec-crit">✨ Critical Hit: Natural 20!</div>';
-  else if(sides===20&&r===1)sp.innerHTML='<div class="spec-result spec-fumble">💀 Fumble: Natural 1!</div>';
+  if(sides===20&&r===20)sp.innerHTML='<div class="spec-result spec-crit"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg> Critical Hit: Natural 20!</div>';
+  else if(sides===20&&r===1)sp.innerHTML='<div class="spec-result spec-fumble"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-death-skull"/></svg> Fumble: Natural 1!</div>';
   else sp.innerHTML=`<div style="font-family:'Josefin Sans',sans-serif;font-size:.78rem;color:var(--brass);margin-top:.35rem">D${sides}</div>`;
   // History
   addRollHistory(r,sides);
@@ -4844,7 +4993,7 @@ function archiveEnsureArchivesCard(){
   card.setAttribute('role','button');
   card.setAttribute('tabindex','0');
   card.setAttribute('aria-label','Archives: The Archivist\u2019s Letter');
-  card.innerHTML='<div style="font-size:1.8rem;margin-bottom:.45rem;line-height:1" aria-hidden="true">\ud83d\udcdc</div><div class="wc-title" translate="no">Archives</div><div class="wc-desc">The Archivist\u2019s Letter</div>';
+  card.innerHTML='<div style="font-size:1.8rem;margin-bottom:.45rem;line-height:1" aria-hidden="true"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-scroll-quill"/></svg></div><div class="wc-title" translate="no">Archives</div><div class="wc-desc">The Archivist\u2019s Letter</div>';
   const open=function(){
     archiveOpenLetter();
     const s=archiveGetState();
@@ -4972,7 +5121,7 @@ reg('lore',function(){
   document.getElementById('panel-lore').innerHTML=`
 <div class="section-header"><h2 class="section-title">World Lore</h2><p class="section-subtitle">The Engine, Victorian London, and the factions</p></div>
 <div class="lore-tabs">
-  ${tabs.map((k,i)=>`<button class="faction-tab${i===0?' active':''}" onclick="showLore('${k}',this)">${{engine:'<svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> The Engine',factions:'🎭 The Factions',dickensians:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#67BF00;vertical-align:middle;margin-right:.3em"></span>Dickensians',servants:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#167A58;vertical-align:middle;margin-right:.3em"></span>Servants of The Engine',egypt:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#F07A00;vertical-align:middle;margin-right:.3em"></span>Scions of the Sands',guild:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#5C5C5C;vertical-align:middle;margin-right:.3em"></span>Guild of Harmony'}[k]}</button>`).join('')}
+  ${tabs.map((k,i)=>`<button class="faction-tab${i===0?' active':''}" onclick="showLore('${k}',this)">${{engine:'<svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> The Engine',factions:'<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-characters"/></svg> The Factions',dickensians:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#67BF00;vertical-align:middle;margin-right:.3em"></span>Dickensians',servants:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#167A58;vertical-align:middle;margin-right:.3em"></span>Servants of The Engine',egypt:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#F07A00;vertical-align:middle;margin-right:.3em"></span>Scions of the Sands',guild:'<span style="display:inline-block;width:.65em;height:.65em;border-radius:50%;background:#5C5C5C;vertical-align:middle;margin-right:.3em"></span>Guild of\u00a0Harmony'}[k]}</button>`).join('')}
 </div>
 ${tabs.map((k,i)=>`<div class="lore-panel${i===0?' active':''}" id="lp-${k}">${lores[k]}</div>`).join('')}`;
 });
@@ -4988,30 +5137,30 @@ reg('eye',function(){
   <div class="tut-body" id="tut-body-eye">
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.25);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
-      The Eye of The Engine is a shared deck of special cards that both players draw from each turn. Cards grant powerful one-off effects: bonus Actions, healing, re-rolls, or interference with your opponent. Each card states when it may be played (during Activation, Maintenance Phase, etc.).
+      The Eye of The Engine is a shared deck of special cards that both players draw from each turn. Cards grant powerful one-off effects: bonus Actions, healing, <span class="nw">re-rolls</span>, or interference with your opponent. Each card states when it may be played (during Activation, Maintenance Phase, etc.).
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
         <strong style="color:var(--brass-light)">Each Turn:</strong> During Phase II, each player draws <strong>1 card</strong>. If you hold <strong style="color:var(--brass-light)">Favour of The Engine</strong>, draw 2 and keep 1. Cards are played during the turn and discarded. The deck reshuffles each Maintenance Phase.<br><br>
         <strong style="color:var(--brass-light)">Tempting Fate:</strong> At any time you may gamble by drawing a card and checking its Eyecon: <span style="color:#86C9AC">\u2714 Green</span> = the effect applies to your Character. <span style="color:#cc6a5a">\u2716 Red</span> = the effect hits your Character instead. High risk, high reward.<br><br>
-        <strong style="color:var(--brass-light)">This Page:</strong> Use <strong>Draw 1</strong> or <strong>Draw 2 (Favour)</strong> for normal play, or <strong style="color:#FF9070">\ud83c\udfb2 Tempt Fate</strong> to gamble. Browse the full card list on the right to learn what\u2019s in the deck.
+        <strong style="color:var(--brass-light)">This Page:</strong> Use <strong>Draw 1</strong> or <strong>Draw 2 (Favour)</strong> for normal play, or <strong style="color:#FF9070"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Tempt Fate</strong> to gamble. Browse the full card list below to learn what\u2019s in the deck.
       </div>
     </div>
   </div>
   </div>
 </div>
 <div style="text-align:center;margin-bottom:1.25rem">
-  <div style="font-family:'Cinzel',serif;font-size:1rem;color:var(--brass-light);margin-bottom:.35rem">👁 The Eye Deck${eeSigilHTML('servants','vertical-align:middle;margin-left:.45rem;')}</div>
-  <div id="eye-count" style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--parchment-dark);margin-bottom:.9rem">${EYE_CARDS.flatMap(c=>Array(c.copies||1).fill(c)).length} cards remaining</div>
+  <div style="font-family:'Cinzel',serif;font-size:1rem;color:var(--brass-light);margin-bottom:.35rem"><span style="position:relative;display:inline-block"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-eye"/></svg> The Eye Deck${eeSigilHTML('servants','position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.25rem;')}</span></div>
+  <div id="eye-count" style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--parchment-dark);margin-bottom:.9rem">${eyeCountText(EYE_CARDS.flatMap(c=>Array(c.copies||1).fill(c)).length)}</div>
   <div style="display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap">
     <button class="draw-btn" onclick="drawEye(1)">Draw 1 Card</button>
     <button class="draw-btn" onclick="drawEye(2)" style="background:linear-gradient(135deg,rgba(212,184,74,.2),rgba(168,106,40,.2))">Draw 2 (Favour)</button>
-    <button class="draw-btn" onclick="drawTemptFate()" style="background:linear-gradient(135deg,rgba(180,60,20,.25),rgba(120,20,10,.2));border-color:rgba(220,56,56,.5);color:#FF9070">🎲 Tempt Fate</button>
+    <button class="draw-btn" onclick="drawTemptFate()" style="background:linear-gradient(135deg,rgba(180,60,20,.25),rgba(120,20,10,.2));border-color:rgba(220,56,56,.5);color:#FF9070"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Tempt Fate</button>
   </div>
-  <button onclick="resetEye()" style="margin-top:.65rem;background:transparent;border:1px solid rgba(212,184,74,.18);color:var(--brass-dark);font-family:'Josefin Sans',sans-serif;font-size:.72rem;padding:.28rem .55rem;border-radius:3px;cursor:pointer">🔄 Shuffle & Reset</button>
+  <button onclick="resetEye()" style="margin-top:.65rem;background:transparent;border:1px solid rgba(212,184,74,.18);color:var(--brass-dark);font-family:'Josefin Sans',sans-serif;font-size:.72rem;padding:.28rem .55rem;border-radius:3px;cursor:pointer"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-card-random"/></svg> Shuffle & Reset</button>
 </div>
 <div id="eye-drawn"></div>
 <div class="card" style="margin-top:1.25rem">
   <div class="card-title" style="cursor:pointer" onclick="var el=document.getElementById('eye-cards-ref');el.style.display=el.style.display==='none'?'block':'none';this.querySelector('.eye-chev').style.transform=el.style.display==='none'?'':'rotate(90deg)'">
-    <span class="eye-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> 🗂 All ${EYE_CARDS.length} Unique Cards
+    <span class="eye-chev" style="display:inline-block;transition:transform .2s;color:var(--brass);margin-right:.3rem">▸</span> <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-card-draw"/></svg> ${EYE_CARDS.length} Unique Cards (${EYE_CARDS.reduce((t,c)=>t+(c.copies||1),0)} in the Deck)
   </div>
   <div id="eye-cards-ref" style="display:none;margin-top:.5rem">
   ${EYE_CARDS.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<div class="eye-card-entry" id="eye-${c.name.replace(/[^a-zA-Z0-9]/g,'_')}" onclick="this.classList.toggle('expanded')">
@@ -5030,6 +5179,8 @@ reg('eye',function(){
   setTimeout(()=>initTutorial('eye'),50);
 });
 
+// Deck counter (walkthrough 2026-10-03): shows the deck size, so it reads true beside the unique-card list
+function eyeCountText(n){const t=EYE_CARDS.reduce((a,c)=>a+(c.copies||1),0);return n+' of '+t+' cards left in the deck';}
 function drawEye(n){
   if(window._eyeDeck.length===0){window._eyeDeck=EYE_CARDS.flatMap(c=>Array(c.copies||1).fill(c));window._eyeDiscard=[];shuffle(window._eyeDeck);showToast('Deck reshuffled!');}
   const drawn=[];
@@ -5038,7 +5189,7 @@ function drawEye(n){
     window._eyeDiscard.push(card);
     drawn.push(card);
   }
-  document.getElementById('eye-count').textContent=window._eyeDeck.length+' cards remaining';
+  document.getElementById('eye-count').textContent=eyeCountText(window._eyeDeck.length);
   const typeColour={positive:'rgba(61,170,133,.15)',neutral:'rgba(212,184,74,.1)',negative:'rgba(220,56,56,.12)'};
   const typeBorder={positive:'rgba(61,170,133,.4)',neutral:'rgba(212,184,74,.35)',negative:'rgba(220,56,56,.35)'};
   document.getElementById('eye-drawn').innerHTML=drawn.map((c,i)=>`
@@ -5065,24 +5216,24 @@ function drawTemptFate(){
   }
   const card=window._eyeDeck.pop();
   if(card) window._eyeDiscard.push(card);
-  document.getElementById('eye-count').textContent=window._eyeDeck.length+' cards remaining';
+  document.getElementById('eye-count').textContent=eyeCountText(window._eyeDeck.length);
 
   const isRed=card&&card.type==='negative';
   const bgCol=isRed?'rgba(220,56,56,.18)':'rgba(61,170,133,.12)';
   const borderCol=isRed?'rgba(220,56,56,.65)':'rgba(61,170,133,.45)';
   const outcome=isRed
     ? `<div style="margin-top:.75rem;padding:.6rem .85rem;background:rgba(220,56,56,.15);border:1px solid rgba(220,56,56,.45);border-radius:6px">
-        <div style="font-family:'Cinzel',serif;font-size:.88rem;color:var(--rust-light);margin-bottom:.25rem">🔴 Red Eyecon: Fate turns against you</div>
+        <div style="font-family:'Cinzel',serif;font-size:.88rem;color:var(--rust-light);margin-bottom:.25rem"><span style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:var(--rust-light);vertical-align:.04em;margin-right:.2em"></span>Red Eyecon: Fate turns against you</div>
         <div style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--parchment-dark);line-height:1.55">If you hold Favour of The Engine, you <strong style="color:var(--rust-light)">lose it immediately</strong>. The Tempt Fate effect above applies.</div>
       </div>`
     : `<div style="margin-top:.75rem;padding:.6rem .85rem;background:rgba(61,170,133,.1);border:1px solid rgba(61,170,133,.35);border-radius:6px">
-        <div style="font-family:'Cinzel',serif;font-size:.88rem;color:#6BCFA8;margin-bottom:.25rem">✅ Eyecon shows: Fate smiles</div>
+        <div style="font-family:'Cinzel',serif;font-size:.88rem;color:#6BCFA8;margin-bottom:.25rem"><span style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#6BCFA8;vertical-align:.04em;margin-right:.2em"></span>Eyecon shows: Fate smiles</div>
         <div style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--parchment-dark);line-height:1.55">You <strong style="color:#6BCFA8">keep Favour of The Engine</strong>. The Tempt Fate effect above applies.</div>
       </div>`;
 
   document.getElementById('eye-drawn').innerHTML=card?`
     <div style="background:${bgCol};border:2px solid ${borderCol};border-radius:10px;padding:1.25rem;animation:revealCard .4s ease both">
-      <div style="font-family:'Josefin Sans',sans-serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:${isRed?'var(--rust-light)':'#6BCFA8'};margin-bottom:.55rem">🎲 Tempting Fate: Card Drawn</div>
+      <div style="font-family:'Josefin Sans',sans-serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:${isRed?'var(--rust-light)':'#6BCFA8'};margin-bottom:.55rem"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Tempting Fate: Card Drawn</div>
       <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem">
         <span style="font-size:1.8rem">${renderIcon(card.eyecon, 'gi gi-eyecon')}</span>
         <div>
@@ -5113,7 +5264,7 @@ reg('features',function(){
 function renderFeatures(){
   document.getElementById('panel-features').innerHTML=`
   <div class="section-header">
-    <div class="section-title">Master Kirkwood's Fascinating Features</div>
+    <div class="section-title">Master Kirkwood's Fascinating Features</div>
     <div class="section-subtitle">Optional Environmental Effects</div>
   </div>
   <div class="tut-wrap">
@@ -5126,15 +5277,15 @@ function renderFeatures(){
           <strong style="color:var(--brass-light)">Setup:</strong> Both players must agree to use them. Roll D6 to determine how many:<br>
           <span style="font-family:'Josefin Sans',sans-serif;font-size:.75rem;color:var(--brass)">1–4 = 1 Feature &nbsp;·&nbsp; 5 = 2 Features &nbsp;·&nbsp; 6 = 3 Features</span><br><br>
           <strong style="color:var(--brass-light)">Generate:</strong> Roll D20 for each Feature. Place them after terrain but before missions are decided. Players alternate placement in the same order used for terrain.<br><br>
-          <strong style="color:var(--brass-light)">This Page:</strong> Use <strong>🎲 Roll D20 Feature</strong> to generate a single random feature, or <strong>🎲 Roll Multiple Features</strong> to roll D6 for quantity and then D20 for each. Browse or search the full list of 20 features below. Tap any entry to expand its complete rules.
+          <strong style="color:var(--brass-light)">This Page:</strong> Use <strong><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Roll D20 Feature</strong> to generate a single random feature, or <strong><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Roll Multiple Features</strong> to roll D6 for quantity and then D20 for each. Browse or search the full list of 20 features below. Tap any entry to expand its complete rules.
         </div>
       </div>
     </div>
     </div>
   </div>
   <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem">
-    <button onclick="rollRandomFeature()" style="background:linear-gradient(135deg,rgba(61,170,133,.15),rgba(61,170,133,.05));border:1px solid rgba(61,170,133,.4);color:var(--green);font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.06em;padding:.4rem .9rem;border-radius:5px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(61,170,133,.4)'">🎲 Roll D20 Feature</button>
-    <button onclick="rollFullSetup()" style="background:linear-gradient(135deg,rgba(212,184,74,.12),rgba(168,106,40,.06));border:1px solid rgba(212,184,74,.4);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.06em;padding:.4rem .9rem;border-radius:5px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--brass)'" onmouseout="this.style.borderColor='rgba(212,184,74,.4)'">🎲 Roll Multiple Features</button>
+    <button onclick="rollRandomFeature()" style="background:linear-gradient(135deg,rgba(61,170,133,.15),rgba(61,170,133,.05));border:1px solid rgba(61,170,133,.4);color:var(--green);font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.06em;padding:.4rem .9rem;border-radius:5px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(61,170,133,.4)'"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Roll D20 Feature</button>
+    <button onclick="rollFullSetup()" style="background:linear-gradient(135deg,rgba(212,184,74,.12),rgba(168,106,40,.06));border:1px solid rgba(212,184,74,.4);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.06em;padding:.4rem .9rem;border-radius:5px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--brass)'" onmouseout="this.style.borderColor='rgba(212,184,74,.4)'"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Roll Multiple Features</button>
     <button id="feat-clear-btn" onclick="document.getElementById('feature-roll-result').innerHTML='';this.style.display='none'" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(212,184,74,.2);color:var(--parchment-dark);font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.06em;padding:.4rem .7rem;border-radius:5px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--brass)'" onmouseout="this.style.borderColor='rgba(212,184,74,.2)'">✕ Clear</button>
     <div style="flex:1;min-width:140px;position:relative">
       <input id="feature-search" type="text" placeholder="Search features\u2026" value="" oninput="filterFeatures(this.value);this.nextElementSibling.style.display=this.value?'flex':'none'"
@@ -5189,7 +5340,7 @@ function rollRandomFeature(){
   if(!f)return;
   const el=document.getElementById('feature-roll-result');
   el.innerHTML=`<div class="card" style="border-color:var(--green);margin-bottom:1rem">
-    <div class="card-title" style="color:var(--green)">🎲 Rolled D20 = ${roll}</div>
+    <div class="card-title" style="color:var(--green)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Rolled D20 = ${roll}</div>
     <div style="padding:.3rem .5rem">
       <div style="font-family:'Cinzel',serif;font-size:1rem;color:var(--brass-light);margin-bottom:.35rem" translate="no">${f.id}. ${f.n}</div>
       <div style="font-size:.82rem;color:var(--parchment);margin-bottom:.65rem">${f.sum}</div>
@@ -5217,7 +5368,7 @@ function rollFullSetup(){
   }
   const el=document.getElementById('feature-roll-result');
   el.innerHTML=`<div class="card" style="border-color:var(--brass);margin-bottom:1rem">
-    <div class="card-title" style="color:var(--brass-light)">🎲 Multiple Features: D6 = ${d6} → ${countLabel}</div>
+    <div class="card-title" style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Multiple Features: D6 = ${d6} → ${countLabel}</div>
     <div style="padding:.2rem .3rem .5rem">
       <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.65rem">
         ${results.map(r=>`<span style="font-family:'Josefin Sans',sans-serif;font-size:.68rem;background:rgba(61,170,133,.12);border:1px solid rgba(61,170,133,.3);color:var(--green);padding:.2rem .55rem;border-radius:4px">D20 = ${r.roll}</span>`).join('')}
@@ -5255,7 +5406,7 @@ function toggleDelight(name,pts){
     showToast(`${name} removed`);
   } else {
     const b=getDelightsBudget();
-    if(b.remaining<pts){showToast('\u26a0 Would exceed 200pt Company limit');return;}
+    if(b.remaining<pts){showToast('Would exceed 200pt Company limit');return;}
     roster.push({n:name,pts:pts});
     Store.set('delights_roster',roster);
     showToast(`${name} added (${pts}pt)`);
@@ -5269,7 +5420,7 @@ function rollRandomDelight(){
   const roll=Math.floor(Math.random()*20)+1;
   const item=DELIGHTS.find(d=>d.pts===tier&&d.roll===roll);
   if(!item)return;
-  document.getElementById('delight-roll-result').innerHTML=`<div class="card" style="border-color:var(--brass);margin-top:.75rem"><div class="card-title">\ud83c\udfb2 Rolled: ${tier}-Point Delight, D20 = ${roll}</div><div style="padding:.5rem .75rem"><strong style="color:var(--brass-light)" translate="no">${item.n}</strong><br><span style="color:var(--parchment)">${item.fx}</span><br><span style="color:var(--parchment-dark);font-size:.85rem"><svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> ${item.use}</span></div></div>`;
+  document.getElementById('delight-roll-result').innerHTML=`<div class="card" style="border-color:var(--brass);margin-top:.75rem"><div class="card-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Rolled: ${tier}-Point Delight, D20 = ${roll}</div><div style="padding:.5rem .75rem"><strong style="color:var(--brass-light)" translate="no">${item.n}</strong><br><span style="color:var(--parchment)">${item.fx}</span><br><span style="color:var(--parchment-dark);font-size:.85rem"><svg class="ig" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> ${item.use}</span></div></div>`;
 }
 
 function renderDelights(filterTier='all',searchVal=''){
@@ -5286,19 +5437,18 @@ function renderDelights(filterTier='all',searchVal=''){
 
   const hasChars=b.charPts>0;
   const budgetHTML=hasChars
-    ?`<div style="display:flex;gap:.5rem;align-items:center;justify-content:center;flex-wrap:wrap;font-size:.82rem;margin-bottom:.25rem"><span style="color:var(--parchment-dark)">\ud83c\udfad Characters: <strong style="color:var(--parchment)">${b.charPts}pts</strong></span><span style="color:var(--brass-dark)">\u00b7</span><span style="color:var(--parchment-dark)">\ud83d\udc8e Delights: <strong style="color:var(--parchment)">${b.delPts}pts</strong></span><span style="color:var(--brass-dark)">\u00b7</span><span style="color:${b.remaining>=0?'var(--parchment-dark)':'var(--rust-light)'}">Remaining: <strong>${b.remaining}pts</strong></span></div>`
+    ?`<div style="display:flex;gap:.5rem;align-items:center;justify-content:center;flex-wrap:wrap;font-size:.82rem;margin-bottom:.25rem"><span style="color:var(--parchment-dark)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-characters"/></svg> Characters: <strong style="color:var(--parchment)">${b.charPts}pts</strong></span><span style="color:var(--brass-dark)">\u00b7</span><span style="color:var(--parchment-dark)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-delights"/></svg> Delights: <strong style="color:var(--parchment)">${b.delPts}pts</strong></span><span style="color:var(--brass-dark)">\u00b7</span><span style="color:${b.remaining>=0?'var(--parchment-dark)':'var(--rust-light)'}">Remaining: <strong>${b.remaining}pts</strong></span></div>`
     :`<div style="font-size:.82rem;color:var(--parchment-dark);text-align:center;margin-bottom:.25rem">No characters selected yet: <a href="#" onclick="event.preventDefault();document.querySelector('.nav-btn[data-panel=characters]').click()" style="color:var(--brass-light)">pick characters first</a>, then spend leftover points here.</div>`;
 
   document.getElementById('panel-delights').innerHTML=`
-<div class="section-header"><h2 class="section-title">Dr Disraeli\u2019s Delights</h2>
+<div class="section-header"><h2 class="section-title st-fit">Dr Disraeli\u2019s Delights</h2>
 <p class="section-subtitle">Extra equipment for your Company</p></div>
 <div class="tut-wrap">
   <button class="tut-btn" id="tut-btn-delights" onclick="toggleTutorial('delights')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-delights">
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);text-align:left">
     <div style="padding:.65rem .85rem;font-size:.85rem;line-height:1.55">
-      <span style="color:var(--parchment)">When building a Company (200pts), you pick Characters on the \ud83c\udfad Characters tab and manage your full roster on the \ud83d\udccb Company tab. Any leftover points can be spent here on equipment items. Tap <span style="color:#6BCFA8;font-weight:700">+</span> to add a Delight. Its cost counts against your shared 200pt budget. Each Character may hold only one Delight at a time. Items can be swapped between Characters during a game using a Handing Off Action.</span>
+      <span style="color:var(--parchment)">When building a Company (200pts), you pick Characters on the <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-characters"/></svg> Characters tab and manage your full roster on the <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-company"/></svg> My Company tab. Any leftover points can be spent here on equipment items. Tap <span style="color:#6BCFA8;font-weight:700">+</span> to add a Delight. Its cost counts against your shared 200pt budget. Each Character may hold only one Delight at a time. Items can be swapped between Characters during a game using a Handing Off Action.</span>
       <div style="margin-top:.55rem">
         <a href="#" onclick="const d=this.nextElementSibling;d.style.display=d.style.display==='none'?'block':'none';this.textContent=d.style.display==='none'?'▸ Show Detailed Usage Rules':'▾ Hide Detailed Usage Rules';const tb=this.closest('.tut-body');if(tb&&tb.classList.contains('open'))setTimeout(()=>{tb.style.maxHeight=tb.scrollHeight+'px'},10);return false" style="font-family:'Josefin Sans',sans-serif;font-size:.72rem;letter-spacing:.06em;color:var(--brass);text-decoration:none">▸ Show Detailed Usage Rules</a>
         <div style="display:none;margin-top:.55rem;padding:.65rem .75rem;background:rgba(212,184,74,.04);border-radius:5px;border:1px solid rgba(212,184,74,.1);font-size:.8rem;line-height:1.7;color:var(--parchment)">
@@ -5319,6 +5469,7 @@ function renderDelights(filterTier='all',searchVal=''){
       </div>
     </div>
   </div>
+  <div class="card" style="margin-top:.75rem;margin-bottom:.25rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap <strong>Sync</strong> at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   </div>
 </div>
 <div style="max-width:720px;margin:0 auto">
@@ -5333,7 +5484,7 @@ function renderDelights(filterTier='all',searchVal=''){
     <button class="filter-pill${filterTier==='2'?' active':''}" onclick="renderDelights('2',document.getElementById('delight-search')?document.getElementById('delight-search').value:'')">2pt</button>
     <button class="filter-pill${filterTier==='3'?' active':''}" onclick="renderDelights('3',document.getElementById('delight-search')?document.getElementById('delight-search').value:'')">3pt</button>
     <button class="filter-pill${filterTier==='4'?' active':''}" onclick="renderDelights('4',document.getElementById('delight-search')?document.getElementById('delight-search').value:'')">4pt</button>
-    <button class="filter-pill" onclick="rollRandomDelight()" style="border-color:rgba(212,184,74,.4)">\ud83c\udfb2 Roll Random</button>
+    <button class="filter-pill" onclick="rollRandomDelight()" style="border-color:rgba(212,184,74,.4)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Roll Random</button>
   </div>
   <div style="position:relative;margin-bottom:.75rem">
     <input id="delight-search" type="text" placeholder="Search delights\u2026" value="${sv}" oninput="filterDelights(this.value);this.nextElementSibling.style.display=this.value?'flex':'none'"
@@ -5396,7 +5547,7 @@ function toggleCompany(name,pts,btn){
   } else {
     const total=roster.reduce((s,r)=>s+(parseInt(r.pts)||0),0)+(window._delightsRoster||[]).reduce((s,d)=>s+(parseInt(d.pts)||0),0);
     const ptsNum=parseInt(pts)||0;
-    if(total+ptsNum>200){showToast('\u26a0 Would exceed 200pt limit');return;}
+    if(total+ptsNum>200){showToast('Would exceed 200pt limit');return;}
     const c=Object.values(CHARS).flat().find(x=>x.name===name);
     if(!c)return;
     roster.push({name:c.name,role:c.role,pts:c.pts,faction:getFaction(name)});
@@ -5466,21 +5617,21 @@ function renderBuilder(){
   <button class="tut-btn" id="tut-btn-company" onclick="toggleTutorial('company')"><span class="tut-gear"><svg class="tg-ico" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 13.9 2h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span> How to Use This Page</button>
   <div class="tut-body" id="tut-body-company">
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">Save up to 3 companies.</strong> Use the numbered tabs (1 · 2 · 3) at the top of this page to keep up to three separate companies, each with its own name and roster. Tap a number to switch between them; tap “+ New” to start another. The company shown here is your active one.</p></div>
-  <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap the ☁ icon at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   <div class="card" style="margin-top:.75rem;border-color:rgba(212,184,74,.2);background:linear-gradient(135deg,rgba(212,184,74,.06),rgba(30,28,40,.9));text-align:left">
     <div style="padding:.65rem .85rem;font-size:.82rem;line-height:1.65;color:var(--parchment)">
-      This is your Company roster, the warband you\u2019ll field in a game of \u201cTwisted.\u201d A standard Company uses a <strong>200-point budget</strong> shared between Characters and Delights.
+      This is your Company roster, the warband you\u2019ll field in a game of \u201cTwisted.\u201d A standard Company uses a <strong><span class="nw">200-point</span> budget</strong> shared between Characters and Delights.
       <div style="margin-top:.65rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
-        <strong style="color:var(--brass-light)">Adding Characters:</strong> Go to the <span style="color:var(--brass-light)">\ud83c\udfad Characters</span> tab, browse any faction, and tap the <span style="color:#6BCFA8;font-weight:700">\u2295</span> button on a card. The Character and their point cost appear here automatically. Characters marked with \u2728 (Engine Eyecon) are unique: only one copy may be taken.
+        <strong style="color:var(--brass-light)">Adding Characters:</strong> Go to the <span style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-characters"/></svg> Characters</span> tab, browse any faction, and tap the <span style="color:#6BCFA8;font-weight:700">\u2295</span> button on a card. The Character and their point cost appear here automatically. Characters marked with <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg> (Engine Eyecon) are unique: only one copy may be taken.
       </div>
       <div style="margin-top:.55rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
-        <strong style="color:var(--brass-light)">Spending Leftover Points:</strong> Any points not spent on Characters can be used on the <span style="color:var(--brass-light)">\ud83d\udc8e Delights</span> tab for equipment items. Delights added there count against the same 200pt budget and appear in a separate section below your Characters.
+        <strong style="color:var(--brass-light)">Spending Leftover Points:</strong> Any points not spent on Characters can be used on the <span style="color:var(--brass-light)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-delights"/></svg> Delights</span> tab for equipment items. Delights added there count against the same 200pt budget and appear in a separate section below your Characters.
       </div>
       <div style="margin-top:.55rem;padding:.55rem .75rem;background:rgba(212,184,74,.06);border-radius:5px;border-left:2px solid var(--brass-dark)">
         <strong style="color:var(--brass-light)">Managing Your Roster:</strong> Tap any Character\u2019s name to view their full card. Tap <span style="color:#cc6a5a">\u2715</span> to remove an entry. Use the <strong>name field</strong> at the top to give your Company a custom name. The progress bar tracks your budget at a glance. Your roster is saved automatically and persists between sessions.
       </div>
     </div>
   </div>
+  <div class="card" style="margin-top:.75rem;margin-bottom:.25rem;border-color:rgba(212,184,74,.3);background:rgba(212,184,74,.06);"><p style="margin:0;font-size:.9rem;"><strong style="color:var(--brass-light)">OPTIONAL: Save across devices.</strong> Your selections here are saved on this device automatically. To use them on your other devices too, tap <strong>Sync</strong> at the top and sign in with Google or Apple. It’s free, completely optional, and you can sign out anytime.</p></div>
   </div>
 </div>
 <div style="max-width:560px;margin:0 auto">
@@ -5510,7 +5661,7 @@ function renderBuilder(){
       <button onclick="event.stopPropagation();removeFromRoster(${i})" title="Remove" class="bldr-action-btn remove" aria-label="Remove ${c.name}">\u2715</button>
     </div>`;
   }).join('')}
-  ${delRoster.length>0?`<div style="margin-top:.75rem;padding-top:.65rem;border-top:1px solid rgba(212,184,74,.15)"><div style="font-family:'Josefin Sans',sans-serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brass-dark);margin-bottom:.4rem">\ud83d\udc8e Delights (${delTotal}pts)</div>${delRoster.map((d,i)=>`<div class="bldr-roster-item" style="border-color:rgba(200,160,60,.3)"><div style="flex:1;cursor:pointer" onclick="navTo('delights');setTimeout(()=>{const el=document.getElementById('delight-'+('${d.n}'.replace(/[^a-zA-Z0-9]/g,'_')));if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.boxShadow='0 0 18px rgba(212,184,74,.5)';setTimeout(()=>el.style.boxShadow='',1500)}},200)"><div class="bldr-char-name" translate="no">${d.n}</div></div><div class="bldr-char-pts">${d.pts}pt</div><button onclick="event.stopPropagation();removeDelight(${i})" title="Remove" class="bldr-action-btn remove" aria-label="Remove ${d.n}">\u2715</button></div>`).join('')}</div>`:''}
+  ${delRoster.length>0?`<div style="margin-top:.75rem;padding-top:.65rem;border-top:1px solid rgba(212,184,74,.15)"><div style="font-family:'Josefin Sans',sans-serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brass-dark);margin-bottom:.4rem"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-delights"/></svg> Delights (${delTotal}pts)</div>${delRoster.map((d,i)=>`<div class="bldr-roster-item" style="border-color:rgba(200,160,60,.3)"><div style="flex:1;cursor:pointer" onclick="navTo('delights');setTimeout(()=>{const el=document.getElementById('delight-'+('${d.n}'.replace(/[^a-zA-Z0-9]/g,'_')));if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.boxShadow='0 0 18px rgba(212,184,74,.5)';setTimeout(()=>el.style.boxShadow='',1500)}},200)"><div class="bldr-char-name" translate="no">${d.n}</div></div><div class="bldr-char-pts">${d.pts}pt</div><button onclick="event.stopPropagation();removeDelight(${i})" title="Remove" class="bldr-action-btn remove" aria-label="Remove ${d.n}">\u2715</button></div>`).join('')}</div>`:''}
   ${total<limit&&roster.length>0?`<div style="text-align:center;margin-top:.65rem;font-size:.82rem;color:var(--parchment-dark)">${limit-total}pts remaining \u00B7 <a href="#" onclick="event.preventDefault();document.querySelector('.nav-btn[data-panel=delights]').click()" style="color:var(--brass-light)">browse Delights</a></div>`:''}
   ${roster.length>0||delRoster.length>0?`<div style="text-align:center;margin-top:1rem"><button onclick="clearRoster()" class="bldr-clear-btn">Clear All</button></div>`:''}
 </div>`;
@@ -5555,7 +5706,7 @@ function filterBuilder(v){
   document.querySelectorAll('.builder-char').forEach(el=>el.style.display=el.dataset.search.includes(lv)?'':'none');
 }
 
-function resetEye(){window._eyeDeck=EYE_CARDS.flatMap(c=>Array(c.copies||1).fill(c));shuffle(window._eyeDeck);window._eyeDiscard=[];document.getElementById('eye-count').textContent=EYE_CARDS.length+' cards remaining';document.getElementById('eye-drawn').innerHTML='';showToast('Eye deck reshuffled 👁');}
+function resetEye(){window._eyeDeck=EYE_CARDS.flatMap(c=>Array(c.copies||1).fill(c));shuffle(window._eyeDeck);window._eyeDiscard=[];document.getElementById('eye-count').textContent=eyeCountText(window._eyeDeck.length);document.getElementById('eye-drawn').innerHTML='';showToast('Eye deck reshuffled');}
 
 function showLore(k,btn){
   document.querySelectorAll('.lore-panel').forEach(p=>p.classList.remove('active'));
@@ -6004,7 +6155,7 @@ function globalSearch(q){
     const bg=typeColors[h.type]||'rgba(42,38,30,.9)';
     const br=typeBorders[h.type]||'rgba(212,184,74,.15)';
     const preview=(h.preview||'').substring(0,120)+(h.preview&&h.preview.length>120?'…':'');
-    return`<div onclick="${h.action}" style="background:linear-gradient(135deg,${bg},rgba(20,16,30,.95));border:1px solid ${br};border-radius:8px;padding:.85rem 1.05rem;margin-bottom:.42rem;cursor:pointer;transition:all .2s;display:grid;grid-template-columns:2.2rem 1fr;gap:.65rem;align-items:start"
+    return`<div class="sr-row" onclick="srMark(${h.type==='Character'?1:0});${h.action}" style="background:linear-gradient(135deg,${bg},rgba(20,16,30,.95));border:1px solid ${br};border-radius:8px;padding:.85rem 1.05rem;margin-bottom:.42rem;cursor:pointer;transition:all .2s;display:grid;grid-template-columns:2.2rem 1fr;gap:.65rem;align-items:start"
     onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 4px 18px rgba(0,0,0,.4)'" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none'">
       <span style="font-size:1.5rem;line-height:1.2;text-align:center">${(()=>{const m={'\uD83D\uDC65':'characters','\u26A1':'abilities','\uD83D\uDD2E':'alchemancy','\uD83D\uDCDC':'rules','\uD83C\uDFFA':'canopic','\uD83D\uDC41\uFE0F':'eye','\uD83D\uDC41':'eye','\uD83D\uDDFA':'missions','\uD83D\uDCCB':'campaign','\uD83C\uDF3F':'features','\uD83C\uDCCF':'tarot','\uD83D\uDC8E':'delights','\uD83D\uDCD6':'lore'};const k=m[h.icon];return k?`<svg class="gi" style="width:1.4rem;height:1.4rem;fill:var(--brass-light)" aria-hidden="true"><use href="#gi-${k}"/></svg>`:h.icon;})()}</span>
       <div>
@@ -6018,6 +6169,53 @@ function globalSearch(q){
       </div>
     </div>`;
   }).join('');
+  srHighlight(res,q);
+}
+
+// ── SEARCH: remember, restore and highlight (walkthrough 2026-10-03) ──
+// srMark stores the query on the current history entry, so Back from the page a result opened brings the
+// results back. A Character result opens a pop-up instead of a page, so it adds one entry of its own.
+function srMark(isPopup){
+  try{
+    const q=(document.getElementById('global-search')||{}).value||'';
+    if(q.trim().length<2)return;
+    const cur=(document.querySelector('.panel.active')||{}).id;
+    const panel=cur?cur.replace('panel-',''):'welcome';
+    history.replaceState(Object.assign({},history.state||{},{panel:(history.state&&history.state.panel)||panel,search:q}),'');
+    if(isPopup)history.pushState({panel:panel,srPopup:1},'');
+  }catch(e){}
+}
+function srRestore(q){
+  const cm=document.getElementById('char-modal');
+  if(cm&&cm.classList.contains('open'))cm.classList.remove('open');
+  const o=document.getElementById('search-overlay');
+  const inp=document.getElementById('global-search');
+  if(!o||!inp)return;
+  o.style.display='block';
+  inp.value=q;
+  globalSearch(q);
+  const r=document.getElementById('search-results');if(r)r.scrollTop=0;
+}
+// wraps each matched word in the result titles and previews with <mark>; text nodes only, so markup stays intact
+function srHighlight(root,q){
+  try{
+    const words=[q.trim(),...q.trim().split(/\s+/)].filter((w,i,a)=>w.length>=2&&a.indexOf(w)===i&&!SEARCH_STOPWORDS.has(w.toLowerCase()));
+    if(!words.length)return;
+    const esc=w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const re=new RegExp('('+words.sort((a,b)=>b.length-a.length).map(esc).join('|')+')','gi');
+    root.querySelectorAll('.sr-row').forEach(row=>{
+      const walk=document.createTreeWalker(row,NodeFilter.SHOW_TEXT);const nodes=[];
+      while(walk.nextNode())nodes.push(walk.currentNode);
+      nodes.forEach(n=>{
+        if(n.parentElement&&n.parentElement.closest('svg,mark'))return;
+        const t=n.nodeValue;re.lastIndex=0;if(!re.test(t))return;
+        const f=document.createDocumentFragment();let last=0;re.lastIndex=0;let m;
+        while((m=re.exec(t))){if(m.index>last)f.appendChild(document.createTextNode(t.slice(last,m.index)));const mk=document.createElement('mark');mk.className='sr-hit';mk.textContent=m[0];f.appendChild(mk);last=m.index+m[0].length;if(!m[0].length)re.lastIndex++;}
+        if(last<t.length)f.appendChild(document.createTextNode(t.slice(last)));
+        n.parentNode.replaceChild(f,n);
+      });
+    });
+  }catch(e){}
 }
 
 // ── MATCH SCORE (search scoring) ─────────────────────────────────────────
@@ -6065,7 +6263,7 @@ function openCombatTracker(name){
   const woundedAt=Math.ceil(maxLife/2);
 
   const CONDITIONS=['Stunned','Prone','Bleed','Entangled','Pinned','Dominated','On Fire','Poisoned'];
-  const statKeys=['SPD','STR','FIN','CC ATT','CC DEF','RNG ATT','RNG DEF','ARM','ALC','LIFE'];
+  const statKeys=['SPD','STR','FIN','CC ATT','RNG ATT','CC DEF','RNG DEF','ARM','ALC','LIFE'];   // same order as the list card (walkthrough 2026-10-03)
   const activeStats=statKeys.filter(k=>charData.stats[k]!==undefined);
   const sKey=name.replace(/[^a-z0-9]/gi,'_');
   const nameEsc=name.replace(/'/g,"\\'");
@@ -6154,7 +6352,7 @@ function openCombatTracker(name){
     const st=lifeState(currentLife);
     const pct=Math.max(0,Math.min(100,(currentLife/maxLife)*100));
     const barClass=st==='ooa'?'critical':st==='wounded'?'wounded':'healthy';
-    const stateLabel=st==='ooa'?'⚰ Out of Action':st==='wounded'?'⚠ Wounded':'✓ Active';
+    const stateLabel=st==='ooa'?'Out of Action':st==='wounded'?'Wounded':'Active';
     const numEl=document.getElementById('ct-life-num-'+sKey);
     const barEl=document.getElementById('ct-life-bar-'+sKey);
     const badgeEl=document.getElementById('ct-state-badge-'+sKey);
@@ -6215,7 +6413,7 @@ function openCombatTracker(name){
       if(pip)pip.classList.toggle('used',i<s.actions);
     });
     const lbl=document.getElementById('ct-act-lbl-'+sKey);
-    if(lbl)lbl.textContent='⚡ Actions ('+(2-s.actions)+' left)';
+    if(lbl)lbl.innerHTML='<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-abilities"/></svg> Actions ('+(2-s.actions)+' left)';
     updateUndoBtn();
   }
 
@@ -6231,7 +6429,7 @@ function openCombatTracker(name){
     const st=lifeState(currentLife);
     const pct=Math.max(0,Math.min(100,(currentLife/maxLife)*100));
     const barClass=st==='ooa'?'critical':st==='wounded'?'wounded':'healthy';
-    const stateLabel=st==='ooa'?'⚰ Out of Action':st==='wounded'?'⚠ Wounded':'✓ Active';
+    const stateLabel=st==='ooa'?'Out of Action':st==='wounded'?'Wounded':'Active';
     const pen=getEffectivePenalties(st,curConds);
     const firstAtkStat=s.oppStat||activeStats.find(k=>k==='CC ATT'||k==='RNG ATT'||k==='FIN')||activeStats[0]||'SPD';
     const firstAtkBase=parseInt(String(charData.stats[firstAtkStat]||0).split('/')[0])||0;
@@ -6268,7 +6466,7 @@ function openCombatTracker(name){
           </div>
         </div>
         <div>
-          <div class="ct-section-title" style="margin-bottom:.5rem" id="ct-act-lbl-${sKey}">⚡ Actions (${2-curActions} left)</div>
+          <div class="ct-section-title" style="margin-bottom:.5rem" id="ct-act-lbl-${sKey}"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-abilities"/></svg> Actions (${2-curActions} left)</div>
           <div class="ct-actions-row">
             ${[0,1].map(i=>`<div class="ct-action-pip${i<curActions?' used':''}" id="ct-apip-${sKey}-${i}" onclick="ctToggleAction('${nameEsc}',${i})" role="checkbox" aria-checked="${i<curActions}" aria-label="Action ${i+1}"><div class="pip-inner"></div></div>`).join('')}
           </div>
@@ -6317,7 +6515,7 @@ function openCombatTracker(name){
     </div>
 
     <div class="ct-section">
-      <div class="ct-section-title">📊 Characteristics</div>
+      <div class="ct-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-bar-chart"/></svg> Characteristics</div>
       <div class="ct-stats">${activeStats.map(k=>`<div class="ct-stat"><span class="ct-stat-lbl">${k}</span><span id="ct-statcell-${sKey}-${k.replace(/\s/g,'_')}">${getEffStat(k,pen).html}</span></div>`).join('')}</div>
       <div id="ct-pen-note-${sKey}">${getPenaltyNote(st,curConds)}</div>
     </div>
@@ -6331,7 +6529,7 @@ function openCombatTracker(name){
     </div>
 
     <div class="ct-section">
-      <div class="ct-section-title">🎲 Dice Roller</div>
+      <div class="ct-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-dice"/></svg> Dice Roller</div>
       <div class="ct-dice-row" style="margin-bottom:.5rem">
         ${['D4','D6','D8','D10','D12','D20'].map(d=>`<button class="ct-die-btn" onclick="ctRollDie('${d}','${sKey}')" aria-label="Roll ${d}">${d}</button>`).join('')}
       </div>
@@ -6360,12 +6558,12 @@ function openCombatTracker(name){
             <div class="ct-opp-total" id="ct-opp-enemy-tot-${sKey}"></div>
           </div>
         </div>
-        <button class="ct-opp-roll-btn" onclick="ctOppRoll('${sKey}')">⚔ Roll Opposed D20</button>
+        <button class="ct-opp-roll-btn" onclick="ctOppRoll('${sKey}')"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg> Roll Opposed D20</button>
       </div>
     </div>
 
     <div class="ct-section">
-      <div class="ct-section-title">⚔ Weapons</div>
+      <div class="ct-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-crossed-swords"/></svg> Weapons</div>
       ${weapons.length?weapons.map(w=>`<div class="ct-weapon-card">
         <div class="ct-weapon-header"><span class="ct-weapon-name">${w.name}</span>${w.dmg?`<span class="ct-weapon-dmg">${w.dmg}</span>`:''}</div>
         ${w.tags.length?`<div class="ct-weapon-tags">${w.tags.map(t=>`<span class="ct-wtag${dangerTags.includes(t)?' danger':specialTags.includes(t)?' special':''}">${t}</span>`).join('')}</div>`:''}
@@ -6373,7 +6571,7 @@ function openCombatTracker(name){
     </div>
 
     <div class="ct-section">
-      <div class="ct-section-title">⚡ Abilities <span style="font-family:'Josefin Sans',sans-serif;font-size:.68rem;color:var(--brass-dark)">(tap to expand)</span></div>
+      <div class="ct-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-abilities"/></svg> Abilities <span style="font-family:'Josefin Sans',sans-serif;font-size:.68rem;color:var(--brass-dark)">(tap to expand)</span></div>
       ${(charData.abilities||[]).map(aName=>{
         const aDef=ABILITIES?ABILITIES.find(x=>x.n===aName):null;
         return`<div class="ct-ability" onclick="this.classList.toggle('expanded')"><div class="ct-ability-header"><span class="ct-ability-name">${aName}</span>${aDef?`<span class="ct-ability-type">${aDef.t}</span>`:''}</div><div class="ct-ability-desc">${aDef?aDef.d:'See abilities glossary.'}</div></div>`;
@@ -6381,8 +6579,8 @@ function openCombatTracker(name){
     </div>
 
     ${charData.schools?`<div class="ct-section">
-      <div class="ct-section-title">🔮 Alchemancy Schools</div>
-      <div style="margin-bottom:.65rem">${charData.schools.map(s=>`<button class="ct-school-btn" onclick="ctToggleSchool('${nameEsc}','${s}',this)">⚗ ${s}</button>`).join('')}</div>
+      <div class="ct-section-title"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-alchemancy"/></svg> Alchemancy Schools</div>
+      <div style="margin-bottom:.65rem">${charData.schools.map(s=>`<button class="ct-school-btn" onclick="ctToggleSchool('${nameEsc}','${s}',this)"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-alchemancy"/></svg> ${s}</button>`).join('')}</div>
       <div id="ct-invocs-${sKey}" style="font-family:'IM Fell English',serif;font-size:.85rem;color:var(--brass-dark);text-align:center;padding:.5rem">Tap a school to see its invocations</div>
     </div>`:''}
 
@@ -6402,7 +6600,7 @@ function openCombatTracker(name){
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.75rem;gap:.5rem;flex-wrap:wrap">
       <button class="ct-reset-btn" onclick="ctReset('${nameEsc}',${maxLife})">↺ Reset All</button>
-      <button onclick="openChar('${nameEsc}');closeCombatTracker()" style="background:rgba(212,184,74,.1);border:1px solid rgba(212,184,74,.3);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.72rem;padding:.38rem .85rem;border-radius:5px;cursor:pointer;transition:all .2s">👤 Full Character Card</button>
+      <button onclick="openChar('${nameEsc}');closeCombatTracker()" style="background:rgba(212,184,74,.1);border:1px solid rgba(212,184,74,.3);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.72rem;padding:.38rem .85rem;border-radius:5px;cursor:pointer;transition:all .2s"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-characters"/></svg> Full Character Card</button>
     </div>
     `;
   }
@@ -6456,8 +6654,8 @@ function ctRollDie(die,sKey){
   resEl.className='ct-roll-result'+(die==='D20'&&roll===20?' crit':die==='D20'&&roll===1?' fumble':'');
   resEl.textContent=roll;
   if(detEl){
-    if(die==='D20'&&roll===20) detEl.textContent='⭐ CRITICAL HIT: Natural 20!';
-    else if(die==='D20'&&roll===1) detEl.textContent='💀 CRITICAL FAILURE: Natural 1';
+    if(die==='D20'&&roll===20) detEl.innerHTML='<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg> CRITICAL HIT: Natural 20!';
+    else if(die==='D20'&&roll===1) detEl.innerHTML='<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-death-skull"/></svg> CRITICAL FAILURE: Natural 1';
     else detEl.textContent=die+' roll';
   }
 }
@@ -6470,8 +6668,8 @@ function ctOppRoll(sKey){
   const myTotal=myStat+myRoll;const enemyTotal=enemyStat+enemyRoll;const myWin=myTotal>enemyTotal;
   const myDieEl=document.getElementById('ct-opp-die-'+sKey);const myTotEl=document.getElementById('ct-opp-tot-'+sKey);
   const enDieEl=document.getElementById('ct-opp-enemy-die-'+sKey);const enTotEl=document.getElementById('ct-opp-enemy-tot-'+sKey);
-  if(myDieEl) myDieEl.textContent=myRoll+(myRoll===20?'⭐':myRoll===1?'💀':'');
-  if(enDieEl) enDieEl.textContent=enemyRoll+(enemyRoll===20?'⭐':enemyRoll===1?'💀':'');
+  if(myDieEl) myDieEl.innerHTML=myRoll+(myRoll===20?' <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg>':myRoll===1?' <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-death-skull"/></svg>':'');
+  if(enDieEl) enDieEl.innerHTML=enemyRoll+(enemyRoll===20?' <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-star-formation"/></svg>':enemyRoll===1?' <svg class="gi gi-inl" aria-hidden="true"><use href="#gi-death-skull"/></svg>':'');
   const tie=myTotal===enemyTotal;
   if(myTotEl){myTotEl.className='ct-opp-total'+(tie?' ':myWin?' win':' lose');myTotEl.textContent=myTotal+(tie?' TIE→Favour':'');}
   if(enTotEl){enTotEl.className='ct-opp-total'+(tie?' ':myWin?' lose':' win');enTotEl.textContent=enemyTotal+(tie?' TIE→Favour':'');}
@@ -6615,7 +6813,7 @@ function showTerm(key){
     <div class="tooltip-title" translate="no">${d.title}</div>
     <div class="tooltip-type" translate="no">${d.type}</div>
     <div class="tooltip-body">${d.body}</div>
-    ${d.example?`<div class="tooltip-example">📖 ${d.example}</div>`:''}
+    ${d.example?`<div class="tooltip-example"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-scroll-quill"/></svg> ${d.example}</div>`:''}
   </div>`;
   document.body.appendChild(el);
 }
@@ -6631,7 +6829,7 @@ function makeStatPillsClickable(){
     const key=Object.keys(TERM_DEFS).find(k=>txt.startsWith(k));
     if(key&&!el.dataset.termBound){
       el.dataset.termBound='1';
-      el.title='Click for details';
+      el.title='Tap for details';
       el.onclick=e=>{e.stopPropagation();showTerm(key);};
     }
   });
@@ -6693,7 +6891,7 @@ window.addEventListener('appinstalled',()=>{
 });
 function pwaInstall(){
   if(_deferredPrompt){_deferredPrompt.prompt();_deferredPrompt.userChoice.then(()=>{_deferredPrompt=null;});}
-  else{alert('To install:\n📱 iPhone/iPad: Tap Share → "Add to Home Screen"\n🤖 Android: Tap menu → "Add to Home Screen"\n💻 Chrome: Look for install icon in address bar');}
+  else{alert('To install:\niPhone/iPad: Tap Share → "Add to Home Screen"\nAndroid: Tap menu → "Add to Home Screen"\nChrome: Look for install icon in address bar');}
 }
 
 function navTo(id,pushHistory){
@@ -6793,7 +6991,7 @@ window.addEventListener('load',function(){
 });
 </script>
 <div id="translate-popup" style="opacity:0;pointer-events:none;position:fixed;top:3.8rem;right:.8rem;z-index:99999;background:linear-gradient(135deg,rgba(26,18,8,.98),rgba(26,26,40,.98));border:1px solid var(--brass-dark);border-radius:8px;padding:.75rem 1rem;box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 12px rgba(212,184,74,.1);transition:opacity .2s;max-height:70vh;overflow-y:auto;min-width:180px">
-<div style="font-family:'Josefin Sans',sans-serif;font-size:.7rem;letter-spacing:.08em;color:var(--brass-dark);text-transform:uppercase;margin-bottom:.5rem" translate="no">🌐 Select Language</div>
+<div style="font-family:'Josefin Sans',sans-serif;font-size:.7rem;letter-spacing:.08em;color:var(--brass-dark);text-transform:uppercase;margin-bottom:.5rem" translate="no"><svg class="gi gi-inl" aria-hidden="true"><use href="#gi-translate"/></svg> Select Language</div>
 <div id="lang-list" translate="no" style="display:flex;flex-direction:column;gap:.25rem"></div>
 </div>
 <style>
@@ -7138,7 +7336,7 @@ function xlBuildPicker(){
   const head=document.querySelector('#translate-popup > div');
 
   if(XL_IOS_WRAP&&xlIosBridge()){
-    if(head)head.textContent='🌐 Translate';
+    if(head)head.innerHTML='<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-translate"/></svg> Translate';
     const b=document.createElement('button');
     b.className='lang-option';b.style.textAlign='center';b.textContent='Translate this page';
     b.onclick=xlSafariHandoff;
@@ -7150,7 +7348,7 @@ function xlBuildPicker(){
     return;
   }
 
-  if(head)head.textContent='🌐 Select Language';
+  if(head)head.innerHTML='<svg class="gi gi-inl" aria-hidden="true"><use href="#gi-translate"/></svg> Select Language';
   const cur=document.createElement('div');
   cur.className='xl-current';cur.id='xl-current';cur.setAttribute('translate','no');
   list.appendChild(cur);
@@ -7205,7 +7403,7 @@ else document.addEventListener('DOMContentLoaded',xlRestore);
 
   // Header icon + first-run tip make sync discoverable upfront (independent of Firebase load).
   window.openSync=function(){try{var m=document.getElementById('mobile-menu');if(m&&!m.classList.contains('open'))toggleMobileMenu();var s=document.getElementById('sync-section');if(s&&s.scrollIntoView)s.scrollIntoView({block:'nearest'});}catch(e){}};
-  function showSyncTip(){try{if(localStorage.getItem('twisted_sync_tip_seen'))return;var bar=document.createElement('div');bar.id='sync-tip';bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:99998;max-width:92%;width:420px;display:flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#241a0e,#1a140a);border:1px solid var(--brass,#d4b84a);border-radius:10px;padding:.6rem .7rem;box-shadow:0 8px 28px rgba(0,0,0,.45);font-family:\'Josefin Sans\',sans-serif;';bar.innerHTML='<span style="flex:1;font-size:.78rem;line-height:1.35;color:#e8d8a0;">New: sign in to <b>sync your saved selections across devices</b>. Optional, anytime.</span>';var go=document.createElement('button');go.textContent='Set up';go.style.cssText='flex:none;min-height:36px;padding:.35rem .7rem;font-family:inherit;font-size:.78rem;font-weight:600;color:#1a140a;background:var(--brass,#d4b84a);border:none;border-radius:7px;cursor:pointer;';var x=document.createElement('button');x.setAttribute('aria-label','Dismiss');x.textContent='\u2715';x.style.cssText='flex:none;min-width:36px;min-height:36px;background:transparent;border:none;color:#9a8f7a;font-size:1rem;cursor:pointer;';function dismiss(){try{localStorage.setItem('twisted_sync_tip_seen','1');}catch(e){}if(bar.parentNode)bar.parentNode.removeChild(bar);}go.onclick=function(){dismiss();window.openSync();};x.onclick=dismiss;bar.appendChild(go);bar.appendChild(x);document.body.appendChild(bar);}catch(e){}}
+  function showSyncTip(){try{if(localStorage.getItem('twisted_sync_tip_seen'))return;var bar=document.createElement('div');bar.id='sync-tip';bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99998;max-width:92%;width:420px;display:flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#241a0e,#1a140a);border:1px solid var(--brass,#d4b84a);border-radius:10px;padding:.6rem .7rem;box-shadow:0 8px 28px rgba(0,0,0,.45);font-family:\'Josefin Sans\',sans-serif;';bar.innerHTML='<span style="flex:1;font-size:.78rem;line-height:1.35;color:#e8d8a0;">New: sign in to <b>sync your saved selections across devices</b>. Optional, anytime.</span>';var go=document.createElement('button');go.textContent='Set up';go.style.cssText='flex:none;min-height:36px;padding:.35rem .7rem;font-family:inherit;font-size:.78rem;font-weight:600;color:#1a140a;background:var(--brass,#d4b84a);border:none;border-radius:7px;cursor:pointer;';var x=document.createElement('button');x.setAttribute('aria-label','Dismiss');x.textContent='\u2715';x.style.cssText='flex:none;min-width:36px;min-height:36px;background:transparent;border:none;color:#9a8f7a;font-size:1rem;cursor:pointer;';function dismiss(){try{localStorage.setItem('twisted_sync_tip_seen','1');}catch(e){}if(bar.parentNode)bar.parentNode.removeChild(bar);}go.onclick=function(){dismiss();window.openSync();};x.onclick=dismiss;bar.appendChild(go);bar.appendChild(x);document.body.appendChild(bar);}catch(e){}}
   if(document.readyState!=='loading')showSyncTip();else document.addEventListener('DOMContentLoaded',showSyncTip);
   Promise.all([import(FB+"firebase-app.js"),import(FB+"firebase-auth.js"),import(FB+"firebase-firestore.js")]).then(function(mods){
     var appMod=mods[0],authMod=mods[1],fsMod=mods[2];
