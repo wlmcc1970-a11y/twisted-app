@@ -4,7 +4,7 @@
 // shell only when offline. Static assets/fonts/Firebase SDK stay cache-first for speed + offline.
 // Bump CACHE when deploying updates (keep it in lockstep with the on-screen version stamp).
 
-const CACHE='twisted-v1021';   // 1.1.1 (banner framing fix 2026-09-28); bump together with APP_VERSION in index.html
+const CACHE='twisted-v1022';   // 1.1.2 (rule links land, header captions, character search 2026-10-03); bump together with APP_VERSION in index.html
 const FONT_CACHE='twisted-fonts-v1';
 const LIB_CACHE='twisted-libs-v1';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon-180.png','./icons/twisted-logo.png'];

@@ -558,6 +558,21 @@ main{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:1.35rem 
 .filter-pill{background:transparent;border:1px solid rgba(212,184,74,.22);color:var(--parchment);font-family:'Josefin Sans',sans-serif;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:.32rem .75rem;border-radius:20px;cursor:pointer;transition:all .2s;}
 .filter-pill:hover,.filter-pill.active{background:rgba(212,184,74,.1);border-color:var(--brass);color:var(--brass-light);}
 .glo-entry.hidden{display:none;}
+/* Character search (1.1.2): same look as the Abilities search box */
+.char-search-wrap{position:relative;margin-bottom:.9rem;}
+.char-search-wrap .glo-search{margin-bottom:0;padding-right:2.9rem;}
+.char-search-clear{position:absolute;right:0;top:50%;transform:translateY(-50%);width:44px;height:44px;background:transparent;border:none;color:var(--brass);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.char-search-clear[hidden]{display:none;}
+.char-search-clear:hover{color:var(--brass-light);}
+#panel-characters.char-searching .faction-panel:not(#fp-favourites){display:block;margin-bottom:.9rem;}
+#panel-characters.char-searching #fp-favourites,#panel-characters .faction-panel.cs-empty{display:none!important;}
+#panel-characters .char-card.cs-hide{display:none;}
+#panel-characters.char-searching .faction-tab.active{background:rgba(26,26,40,.8);border-color:rgba(212,184,74,.18);color:var(--parchment-dark);}
+.char-search-empty{text-align:center;padding:1.5rem 1rem 1.25rem;}
+.char-search-empty[hidden]{display:none;}
+.char-search-empty .cse-head{font-family:'IM Fell English',serif;font-size:1rem;color:var(--parchment-dark);text-wrap:balance;}
+.char-search-empty .cs-q{color:var(--brass);font-weight:700;}
+.char-search-empty .cse-sub{font-family:'Josefin Sans',sans-serif;font-size:.72rem;color:var(--brass-dark);margin-top:.5rem;text-wrap:balance;}
 /* glo-head/name/type/desc: see readability section below */
 
 /* CANOPIC */
@@ -1053,6 +1068,20 @@ main{padding:.75rem .65rem;}
   .header-icon-btn{width:38px;height:38px;}
   .hamburger-btn{min-width:38px;min-height:38px;}
   .logo-twisted{font-size:1.05rem;letter-spacing:.04em;}
+}
+/* ── HEADER CAPTIONS (1.1.2): a one-word label under each header icon, inside the same 44x44 button, so the header stays ONE row ── */
+.header-icon-btn{flex-direction:column;gap:2px;}
+.header-icon-btn .hib-cap{display:block;font-family:'Josefin Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.02em;line-height:1;white-space:nowrap;color:inherit;text-shadow:none;pointer-events:none;}
+.header-icon-btn .gi{width:1.05rem;height:1.05rem;}
+/* Game Mode OFF is the normal state: neutral, not red. ON keeps its clear green glow. */
+.gm-btn.gm-off{background:linear-gradient(135deg,rgba(212,197,169,.1),rgba(212,197,169,.04));border-color:rgba(212,197,169,.35);color:var(--parchment-dark);box-shadow:none;text-shadow:none;}
+.gm-btn.gm-off:hover{border-color:var(--brass);background:rgba(212,184,74,.14);box-shadow:0 0 8px rgba(212,184,74,.15);}
+/* Under 380px: tighten gaps a little so the TWISTED wordmark is not clipped */
+@media(max-width:379px){
+  header{padding:0 .4rem;}
+  .header-top{gap:.2rem;}
+  .header-actions{gap:.15rem;}
+  .logo-twisted{font-size:.98rem;letter-spacing:.03em;}
 }
 @media(max-width:345px){
   header{padding:0 .45rem;}
@@ -1724,17 +1753,17 @@ body{background-color:var(--iron-dark)}
         <span class="logo-sub">Steampunk Skirmish · Official Companion App</span>
       </div>
       <div class="header-actions">
-        <button onclick="toggleSearch()" title="Search (⌘K)" aria-label="Search" class="header-icon-btn"><svg class="gi" aria-hidden="true"><use href="#gi-search"/></svg></button>
-        <button onclick="openSync()" title="Sync across devices" aria-label="Sync across devices" class="header-icon-btn" id="sync-header-btn"><svg class="gi" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg></button>
+        <button onclick="toggleSearch()" title="Search (⌘K)" aria-label="Search" class="header-icon-btn"><svg class="gi" aria-hidden="true"><use href="#gi-search"/></svg><span class="hib-cap" translate="no" aria-hidden="true">Search</span></button>
+        <button onclick="openSync()" title="Sync across devices" aria-label="Sync across devices" class="header-icon-btn" id="sync-header-btn"><svg class="gi" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg><span class="hib-cap" translate="no" aria-hidden="true">Sync</span></button>
         <div class="gm-dropdown-wrap" id="gm-dropdown-wrap">
-          <button class="header-icon-btn gm-btn gm-off" id="game-mode-btn" onclick="toggleGmDropdown()" title="Game Mode OFF" aria-label="Game Mode"><svg class="gi" aria-hidden="true"><use href="#gi-gamemode"/></svg></button>
+          <button class="header-icon-btn gm-btn gm-off" id="game-mode-btn" onclick="toggleGmDropdown()" title="Game Mode OFF" aria-label="Game Mode"><svg class="gi" aria-hidden="true"><use href="#gi-gamemode"/></svg><span class="hib-cap" translate="no" aria-hidden="true">Game</span></button>
           <div class="gm-dropdown" id="gm-dropdown">
             <div class="gm-dropdown-title"><svg class="gi" aria-hidden="true"><use href="#gi-gamemode"/></svg> Game Mode</div>
             <button class="gm-option" data-mode="off" onclick="setGameMode(false)"><span class="gm-opt-icon">○</span> OFF: Show All Tabs</button>
             <button class="gm-option" data-mode="on" onclick="setGameMode(true)"><span class="gm-opt-icon">○</span> ON: Show Limited Tabs</button>
           </div>
         </div>
-        <button id="translate-btn" translate="no" onclick="toggleTranslatePopup()" title="Translate" aria-label="Translate" class="header-icon-btn"><svg class="gi" aria-hidden="true"><use href="#gi-translate"/></svg></button>
+        <button id="translate-btn" translate="no" onclick="toggleTranslatePopup()" title="Translate" aria-label="Translate" class="header-icon-btn"><svg class="gi" aria-hidden="true"><use href="#gi-translate"/></svg><span class="hib-cap" translate="no" aria-hidden="true">Language</span></button>
         <button id="pwa-install-btn" onclick="pwaInstall()" style="display:none;background:linear-gradient(135deg,rgba(212,184,74,.18),rgba(168,106,40,.18));border:1px solid var(--brass-dark);color:var(--brass-light);font-family:'Josefin Sans',sans-serif;font-size:.68rem;letter-spacing:.07em;padding:.3rem .52rem;border-radius:4px;cursor:pointer;align-items:center;gap:.3rem;white-space:nowrap;flex-shrink:0"><svg class="gi" aria-hidden="true"><use href="#gi-install"/></svg> Install</button>
       </div>
     </div>
@@ -1909,7 +1938,7 @@ const Store={
 };
 
 // ── APP VERSION (diagnostic) ─────────────────────────────
-const APP_VERSION='1.1.1';   // bump together with CACHE in sw.js (twisted-v1021 = 1.1.1)
+const APP_VERSION='1.1.2';   // bump together with CACHE in sw.js (twisted-v1022 = 1.1.2)
 
 // ── HTML ESCAPE HELPER (XSS guard for user-injected strings) ──
 function escapeHTML(s){
@@ -2727,7 +2756,9 @@ reg('characters',function(){
   </div>
 </div>
 <div id="char-budget-summary"></div>
-<div class="faction-tabs">${tabs}</div>${panels}`;
+<div class="char-search-wrap"><input id="char-search" class="glo-search" placeholder="Search characters\u2026" aria-label="Search characters" autocomplete="off" oninput="filterChars(this.value)"><button type="button" class="char-search-clear" id="char-search-clear" onclick="clearCharSearch()" aria-label="Clear search" title="Clear search" hidden>\u2715</button></div>
+<div class="faction-tabs">${tabs}</div>
+<div class="char-search-empty" id="char-search-empty" hidden><div class="cse-head">No Character answers to \u201C<span class="cs-q"></span>\u201D</div><div class="cse-sub">Check the spelling, or clear the search to browse every faction.</div></div>${panels}`;
   renderCharSummary();
   setTimeout(()=>initTutorial('chars'),50);
 });
@@ -2762,11 +2793,42 @@ function clearFavourites(){
 }
 
 function showFaction(k,btn){
+  const cs=document.getElementById('char-search');
+  if(cs&&cs.value){cs.value='';filterChars('');}
   document.querySelectorAll('.faction-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.faction-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('fp-'+k).classList.add('active');
   btn.classList.add('active');
   if(k==='favourites')renderFavPanel();
+}
+
+// Character search (1.1.2): filters every faction's cards by name as you type
+function filterChars(v){
+  const raw=(v||'').trim(),lv=raw.toLowerCase();
+  const panel=document.getElementById('panel-characters');
+  if(!panel)return;
+  panel.classList.toggle('char-searching',!!lv);
+  const clr=document.getElementById('char-search-clear');
+  if(clr)clr.hidden=!lv;
+  let n=0;
+  panel.querySelectorAll('.faction-panel:not(#fp-favourites)').forEach(fp=>{
+    let k=0;
+    fp.querySelectorAll('.char-card').forEach(card=>{
+      const nm=((card.querySelector('.char-name')||{}).textContent||'').toLowerCase();
+      const hit=!lv||nm.includes(lv);
+      card.classList.toggle('cs-hide',!hit);
+      if(hit)k++;
+    });
+    fp.classList.toggle('cs-empty',!!lv&&!k);
+    n+=k;
+  });
+  const e=document.getElementById('char-search-empty');
+  if(e){e.hidden=!(lv&&!n);const q=e.querySelector('.cs-q');if(q)q.textContent=raw;}
+}
+function clearCharSearch(){
+  const i=document.getElementById('char-search');
+  if(!i)return;
+  i.value='';filterChars('');i.focus();
 }
 
 function statClass(v){const n=parseInt(v);if(isNaN(n))return '';return n>=7?'stat-hi':n<=3?'stat-lo':'stat-mid';}
@@ -3793,11 +3855,29 @@ function abilityDesc(name){
   return a?a.d:'Click to see description. Check the Abilities tab for full details.';
 }
 
-function showRule(k,btn){
+// Scroll a Rules section or block to just below the header (1.1.2). The header only
+// counts when it actually stays on screen (fixed, or sticky inside a tall parent).
+function rulesScrollTo(el){
+  if(!el)return;
+  const h=document.querySelector('header');
+  let off=12;
+  if(h){
+    const cs=getComputedStyle(h);
+    let stays=cs.position==='fixed';
+    if(cs.position==='sticky'&&h.parentElement&&h.parentElement.offsetHeight>h.offsetHeight+40){
+      stays=true;
+      for(let e=h.parentElement;e&&e!==document.documentElement;e=e.parentElement){const c=getComputedStyle(e),vis=v=>v==='visible'||v==='clip';if(!vis(c.overflowX)||!vis(c.overflowY)){stays=false;break;}}
+    }
+    if(stays)off+=h.offsetHeight;
+  }
+  window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.pageYOffset-off),behavior:'smooth'});
+}
+function showRule(k,btn,noScroll){
   document.querySelectorAll('.rules-page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.rules-nav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById('rp-'+k).classList.add('active');
   btn.classList.add('active');
+  if(!noScroll)rulesScrollTo(document.getElementById('rp-'+k));
 }
 
 // ── CANOPIC DATA ──────────────────────────────────────────
@@ -5599,23 +5679,31 @@ function searchNavInvocation(school,name){
   setTimeout(()=>tryFind(0),400);
 }
 function searchNavRule(page,anchorId){
+  const q=((document.getElementById('global-search')||{}).value||'').trim().toLowerCase();
   toggleSearch();navTo('rules');
   function tryFind(attempt){
     const btn=document.querySelector('.rules-nav-item[onclick*="'+page+'"]');
     if(btn){
-      showRule(page,btn);
-      if(anchorId){
-        // After the page content renders, scroll to and briefly highlight the
-        // specific sub-section (e.g. Disengaging within Close Combat).
-        (function tryAnchor(a){
-          const el=document.getElementById(anchorId);
-          if(!el){if(a<4)setTimeout(()=>tryAnchor(a+1),200);return;}
-          el.scrollIntoView({behavior:'smooth',block:'center'});
-          el.style.transition='box-shadow .3s';
-          el.style.boxShadow='0 0 18px rgba(212,184,74,.5)';
-          setTimeout(()=>{el.style.boxShadow='';},1800);
-        })(0);
-      }
+      showRule(page,btn,true);
+      // After the page content renders, scroll to and briefly highlight the
+      // specific sub-section (e.g. Disengaging within Close Combat). With no
+      // anchor, land on the block whose heading (then text) names the search
+      // words (e.g. "line of sight" -> Line of Sight & Cover), else the section top.
+      (function tryAnchor(a){
+        const pg=document.getElementById('rp-'+page);
+        let el=anchorId?document.getElementById(anchorId):null;
+        if(anchorId&&!el){if(a<4)setTimeout(()=>tryAnchor(a+1),200);return;}
+        if(!el&&pg&&q){
+          const re=new RegExp('\\b'+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');
+          const blocks=[...pg.querySelectorAll('.rule-block')];
+          el=blocks.find(b=>{const h=b.querySelector('h3,h4');return h&&re.test(h.textContent);})||blocks.find(b=>re.test(b.textContent))||null;
+        }
+        if(!el){rulesScrollTo(pg);return;}
+        rulesScrollTo(el);
+        el.style.transition='box-shadow .3s';
+        el.style.boxShadow='0 0 18px rgba(212,184,74,.5)';
+        setTimeout(()=>{el.style.boxShadow='';},1800);
+      })(0);
     }
     else if(attempt<3)setTimeout(()=>tryFind(attempt+1),300);
   }
@@ -5692,7 +5780,14 @@ function searchNavSpirit(name){
   function tryShow(attempt){
     const el=document.getElementById('spirit-detail');
     if(el)showSpiritDetail(name);
-    else if(attempt<3)setTimeout(()=>tryShow(attempt+1),300);
+    else if(attempt<3){setTimeout(()=>tryShow(attempt+1),300);return;}
+    // 1.1.2: open that spirit in the All 20 Spirits list and bring it into view
+    const entry=[...document.querySelectorAll('#spirit-list .spirit-entry')].find(e=>{const n=e.querySelector('[translate="no"]');return n&&n.textContent.trim()===name;});
+    if(!entry)return;
+    entry.classList.add('expanded');
+    entry.scrollIntoView({behavior:'smooth',block:'center'});
+    entry.style.transition='box-shadow .3s';entry.style.boxShadow='0 0 18px rgba(212,184,74,.5),inset 0 0 8px rgba(212,184,74,.15)';
+    setTimeout(()=>{entry.style.boxShadow='';},1800);
   }
   setTimeout(()=>tryShow(0),400);
 }
