@@ -6,15 +6,15 @@
    App Store and Google Play. A plain web browser is sent to the app's marketing page instead.
    Any ONE keep signal keeps the app (fails safe for paying customers): the iOS store shell
    (PWAShell user agent), installed or Android app display mode, the Android app referrer, the
-   ?app=android launch marker, or an earlier in-app page in this tab. Local test servers never redirect.
+   ?app=android launch marker, the ?app=translate iOS Safari hand-off, or an earlier in-app page in this tab. Local test servers never redirect.
    Same pattern as Card Night and Stitch Scroll. */
 (function(){try{var h=location.hostname;if(!h||h==='localhost'||h==='127.0.0.1'||h==='[::1]')return;
 var K='twisted-app',ok=false;function mm(q){try{return !!(window.matchMedia&&matchMedia(q).matches)}catch(e){return false}}
 try{if(sessionStorage.getItem(K)==='1')ok=true}catch(e){}
-if(!ok&&/PWAShell/i.test(navigator.userAgent||''))ok=true;
+if(!ok&&/PWAShell|MERCSApp/i.test(navigator.userAgent||''))ok=true;
 if(!ok&&(mm('(display-mode: standalone)')||mm('(display-mode: fullscreen)')||mm('(display-mode: minimal-ui)')||navigator.standalone===true))ok=true;
 if(!ok&&(document.referrer||'').indexOf('android-app://')===0)ok=true;
-if(!ok&&/[?&]app=android(&|$)/.test(location.search||''))ok=true;
+if(!ok&&/[?&]app=(android|translate)(&|$)/.test(location.search||''))ok=true;
 if(ok){try{sessionStorage.setItem(K,'1')}catch(e){}return}
 document.documentElement.style.visibility='hidden';location.replace('https://digirunestudios.com/twisted/');}catch(e){}})();
 </script>
@@ -7371,10 +7371,12 @@ async function xlRestore(){
 window.xlRestore=xlRestore;
 
 /* ---------- iOS: hand the page to Safari ---------- */
+/* Translate hand-off URL carries app=translate so the store-only guard keeps the app open in Safari. */
+function XL_HANDOFF_URL(){try{return (function(){var u=location.href.split('#'),h=u[1]?'#'+u[1]:'';return u[0]+(u[0].indexOf('?')>-1?'&':'?')+'app=translate'+h;})();}catch(e){return location.href;}}
 function xlSafariHandoff(){
   try{if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.translatePage){
-    window.webkit.messageHandlers.translatePage.postMessage(location.href);xlClosePopup();return;}}catch(e){}
-  window.open(location.href,'_blank','noopener');xlClosePopup();
+    window.webkit.messageHandlers.translatePage.postMessage(XL_HANDOFF_URL());xlClosePopup();return;}}catch(e){}
+  window.open(XL_HANDOFF_URL(),'_blank','noopener');xlClosePopup();
 }
 window.xlSafariHandoff=xlSafariHandoff;
 
