@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+/* STORE-ONLY GUARD (DigiRune rule, 2026-10-05): this address is the app itself, sold only in the
+   App Store and Google Play. A plain web browser is sent to the app's marketing page instead.
+   Any ONE keep signal keeps the app (fails safe for paying customers): the iOS store shell
+   (PWAShell user agent), installed or Android app display mode, the Android app referrer, the
+   ?app=android launch marker, or an earlier in-app page in this tab. Local test servers never redirect.
+   Same pattern as Card Night and Stitch Scroll. */
+(function(){try{var h=location.hostname;if(!h||h==='localhost'||h==='127.0.0.1'||h==='[::1]')return;
+var K='twisted-app',ok=false;function mm(q){try{return !!(window.matchMedia&&matchMedia(q).matches)}catch(e){return false}}
+try{if(sessionStorage.getItem(K)==='1')ok=true}catch(e){}
+if(!ok&&/PWAShell/i.test(navigator.userAgent||''))ok=true;
+if(!ok&&(mm('(display-mode: standalone)')||mm('(display-mode: fullscreen)')||mm('(display-mode: minimal-ui)')||navigator.standalone===true))ok=true;
+if(!ok&&(document.referrer||'').indexOf('android-app://')===0)ok=true;
+if(!ok&&/[?&]app=android(&|$)/.test(location.search||''))ok=true;
+if(ok){try{sessionStorage.setItem(K,'1')}catch(e){}return}
+document.documentElement.style.visibility='hidden';location.replace('https://digirunestudios.com/twisted/');}catch(e){}})();
+</script>
+
 <style id="pk-kit">
 /* DigiRune Polish Kit v1.0.1 (2026-09-26) - pk.css
    The Premium Polish Standard, as reusable code. Every value reads from an app's own theme
