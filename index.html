@@ -1767,6 +1767,12 @@ main{padding-bottom:calc(5rem + env(safe-area-inset-bottom,0px))!important}
 @media (min-width:1024px){
   #main-nav{flex-wrap:wrap!important;overflow-x:visible;justify-content:center;row-gap:.35rem;-webkit-mask-image:none;mask-image:none}
 }
+/* Tablets 701 to 1023px (iPad portrait included): wrap the section tabs into centred rows (capped width keeps them balanced, 6/5/4), so every
+   section is visible instead of hidden off the edge of a sideways-scrolling row */
+@media (min-width:701px) and (max-width:1023px){
+  #main-nav{flex-wrap:wrap!important;overflow-x:visible;justify-content:center;row-gap:.3rem;column-gap:.15rem;-webkit-mask-image:none;mask-image:none;max-width:664px;margin-left:auto;margin-right:auto}
+  #main-nav .nav-btn{flex:none;font-size:.7rem;padding:.3rem .62rem}
+}
 /* First-run sync tip at the bottom: lift Back to top above it while it shows */
 body:has(#sync-tip) #back-top{bottom:calc(var(--tw-tip-h,96px) + 24px + env(safe-area-inset-bottom,0px))}
 
@@ -2114,7 +2120,7 @@ const Store={
 };
 
 // ── APP VERSION (diagnostic) ─────────────────────────────
-const APP_VERSION='1.1.2';   // bump together with CACHE in sw.js (twisted-v1022 = 1.1.2)
+const APP_VERSION='1.1.3';   // bump together with CACHE in sw.js (twisted-v1023 = 1.1.3)
 
 // ── HTML ESCAPE HELPER (XSS guard for user-injected strings) ──
 function escapeHTML(s){
