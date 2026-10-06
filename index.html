@@ -1768,10 +1768,12 @@ main{padding-bottom:calc(5rem + env(safe-area-inset-bottom,0px))!important}
   #main-nav{flex-wrap:wrap!important;overflow-x:visible;justify-content:center;row-gap:.35rem;-webkit-mask-image:none;mask-image:none}
 }
 /* Tablets 701 to 1023px (iPad portrait included): wrap the section tabs into centred rows (capped width keeps them balanced, 6/5/4), so every
-   section is visible instead of hidden off the edge of a sideways-scrolling row */
-@media (min-width:701px) and (max-width:1023px){
+   section is visible instead of hidden off the edge of a sideways-scrolling row. Phones held sideways (under 500px tall)
+   keep the single scrolling row so the header stays short. */
+@media (min-width:701px) and (max-width:1023px) and (min-height:500px){
   #main-nav{flex-wrap:wrap!important;overflow-x:visible;justify-content:center;row-gap:.3rem;column-gap:.15rem;-webkit-mask-image:none;mask-image:none;max-width:664px;margin-left:auto;margin-right:auto}
   #main-nav .nav-btn{flex:none;font-size:.7rem;padding:.3rem .62rem}
+  body.game-mode #main-nav{max-width:560px}
 }
 /* First-run sync tip at the bottom: lift Back to top above it while it shows */
 body:has(#sync-tip) #back-top{bottom:calc(var(--tw-tip-h,96px) + 24px + env(safe-area-inset-bottom,0px))}
