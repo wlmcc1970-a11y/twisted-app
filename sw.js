@@ -4,10 +4,10 @@
 // shell only when offline. Static assets/fonts/Firebase SDK stay cache-first for speed + offline.
 // Bump CACHE when deploying updates (keep it in lockstep with the on-screen version stamp).
 
-const CACHE='twisted-v1024';   // 1.1.4 (iOS shell: no stray Done checkmark 2026-10-12); bump together with APP_VERSION in index.html
+const CACHE='twisted-v1025';   // 1.1.5 (report-a-problem form + screen stays awake 2026-10-14); bump together with APP_VERSION in index.html
 const FONT_CACHE='twisted-fonts-v1';
 const LIB_CACHE='twisted-libs-v1';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon-180.png','./icons/twisted-logo.png','./fonts/tw-lining-digits.woff2','./fonts/tw-lining-digits-italic.woff2'];
+const ASSETS=['./','./index.html','./manifest.webmanifest','./digirune-feedback.js','./digirune-keepawake.js','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon-180.png','./icons/twisted-logo.png','./fonts/tw-lining-digits.woff2','./fonts/tw-lining-digits-italic.woff2'];
 
 self.addEventListener('install',e=>e.waitUntil(
   caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
